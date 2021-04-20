@@ -1,0 +1,51 @@
+\begin{thebibliography}{}
+
+\bibitem [\protect \citeauthoryear {%
+Craig%
+}{%
+Craig%
+}{%
+{\protect \APACyear {2013}}%
+}]{%
+craig_2013}
+\APACinsertmetastar {%
+craig_2013}%
+\begin{APACrefauthors}%
+Craig, A\BPBI B.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYear{2013}.
+\newblock
+\APACrefbtitle {Understanding augmented reality: concepts and applications}
+  {Understanding augmented reality: concepts and applications}.
+\newblock
+\APACaddressPublisher{}{Morgan Kaufmann}.
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
+Tobien%
+}{%
+Tobien%
+}{%
+{\protect \APACyear {2016}}%
+}]{%
+tobien_2016}
+\APACinsertmetastar {%
+tobien_2016}%
+\begin{APACrefauthors}%
+Tobien, J.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{2016}{Sep}{}.
+\newblock
+\APACrefbtitle {Pokemon Go: Millionen Spieler – Woher kommt der gigantische
+  Hype?} {Pokemon go: Millionen spieler – woher kommt der gigantische hype?}
+\newblock
+\begin{APACrefURL}
+  \url{https://www.welt.de/wirtschaft/webwelt/article157051983/Woher-kommt-der-gigantische-Pokemon-Go-Hype.html}
+  \end{APACrefURL}
+\PrintBackRefs{\CurrentBib}
+
+\end{thebibliography}
