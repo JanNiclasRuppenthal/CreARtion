@@ -1,6 +1,96 @@
 \begin{thebibliography}{}
 
 \bibitem [\protect \citeauthoryear {%
+Attanasio%
+\ \protect \BOthers {.}}{%
+Attanasio%
+\ \protect \BOthers {.}}{%
+{\protect \APACyear {2017}}%
+}]{%
+attanasio_2017}
+\APACinsertmetastar {%
+attanasio_2017}%
+\begin{APACrefauthors}%
+Attanasio, G.%
+, Cannavo, A.%
+, Cibrario, F.%
+, Lamberti, F.%
+, Montuschi, P.%
+\BCBL {}\ \BBA {} Paravati, G.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{2017}{}{}.
+\newblock
+{\BBOQ}\APACrefatitle {HOT: Hold your own tools for AR-based constructive art}
+  {Hot: Hold your own tools for ar-based constructive art}.{\BBCQ}
+\newblock
+\APACjournalVolNumPages{2017 IEEE Symposium on 3D User Interfaces
+  (3DUI)}{}{}{256–257}.
+\newblock
+\begin{APACrefDOI} \doi{10.1109/3dui.2017.7893369} \end{APACrefDOI}
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
+Cannavo%
+}{%
+Cannavo%
+}{%
+{\protect \APACyear {2020}}%
+}]{%
+cannavo_2020}
+\APACinsertmetastar {%
+cannavo_2020}%
+\begin{APACrefauthors}%
+Cannavo, A.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYear{2020}.
+\unskip\
+\newblock
+\APACrefbtitle {Interfaces for human-centered production and use of computer
+  graphics assets} {Interfaces for human-centered production and use of
+  computer graphics assets}\ \APACtypeAddressSchool {\BUPhD}{}{}.
+\unskip\
+\newblock
+\APACaddressSchool {}{POLITECNICO DI TORINO}.
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
+Cannavo%
+\ \protect \BOthers {.}}{%
+Cannavo%
+\ \protect \BOthers {.}}{%
+{\protect \APACyear {2017}}%
+}]{%
+cannavo_2017}
+\APACinsertmetastar {%
+cannavo_2017}%
+\begin{APACrefauthors}%
+Cannavo, A.%
+, Cermelli, F.%
+, Chiaramida, V.%
+, Ciccone, G.%
+, Lamberti, F.%
+, Montuschi, P.%
+\BCBL {}\ \BBA {} Paravati, G.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{2017}{}{}.
+\newblock
+{\BBOQ}\APACrefatitle {T4T: Tangible interface for tuning 3D object
+  manipulation tools} {T4t: Tangible interface for tuning 3d object
+  manipulation tools}.{\BBCQ}
+\newblock
+\APACjournalVolNumPages{2017 IEEE Symposium on 3D User Interfaces
+  (3DUI)}{}{}{266–267}.
+\newblock
+\begin{APACrefDOI} \doi{10.1109/3dui.2017.7893374} \end{APACrefDOI}
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
 Craig%
 }{%
 Craig%
@@ -21,6 +111,37 @@ Craig, A\BPBI B.%
   {Understanding augmented reality: concepts and applications}.
 \newblock
 \APACaddressPublisher{}{Morgan Kaufmann}.
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
+Liu%
+, Au%
+, Fu%
+\BCBL {}\ \BBA {} Tai%
+}{%
+Liu%
+\ \protect \BOthers {.}}{%
+{\protect \APACyear {2012}}%
+}]{%
+liu_2012}
+\APACinsertmetastar {%
+liu_2012}%
+\begin{APACrefauthors}%
+Liu, J.%
+, Au, O\BPBI K\BHBI C.%
+, Fu, H.%
+\BCBL {}\ \BBA {} Tai, C\BHBI L.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{2012}{}{}.
+\newblock
+{\BBOQ}\APACrefatitle {Two-Finger Gestures for 6DOF Manipulation of 3D Objects}
+  {Two-finger gestures for 6dof manipulation of 3d objects}.{\BBCQ}
+\newblock
+\APACjournalVolNumPages{Computer Graphics Forum}{31}{7}{2047–2055}.
+\newblock
+\begin{APACrefDOI} \doi{10.1111/j.1467-8659.2012.03197.x} \end{APACrefDOI}
 \PrintBackRefs{\CurrentBib}
 
 \bibitem [\protect \citeauthoryear {%
