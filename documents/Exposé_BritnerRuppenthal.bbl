@@ -114,6 +114,36 @@ Craig, A\BPBI B.%
 \PrintBackRefs{\CurrentBib}
 
 \bibitem [\protect \citeauthoryear {%
+Goh%
+, Sunar%
+\BCBL {}\ \BBA {} Ismail%
+}{%
+Goh%
+\ \protect \BOthers {.}}{%
+{\protect \APACyear {2019}}%
+}]{%
+goh_sunar_ismail_2019}
+\APACinsertmetastar {%
+goh_sunar_ismail_2019}%
+\begin{APACrefauthors}%
+Goh, E\BPBI S.%
+, Sunar, M\BPBI S.%
+\BCBL {}\ \BBA {} Ismail, A\BPBI W.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{2019}{Mar}{}.
+\newblock
+{\BBOQ}\APACrefatitle {3D Object Manipulation Techniques in Handheld Mobile
+  Augmented Reality Interface: A Review} {3d object manipulation techniques in
+  handheld mobile augmented reality interface: A review}.{\BBCQ}
+\newblock
+\APACjournalVolNumPages{IEEE Access}{7}{}{40581–40601}.
+\newblock
+\begin{APACrefDOI} \doi{10.1109/access.2019.2906394} \end{APACrefDOI}
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
 Liu%
 , Au%
 , Fu%
@@ -145,6 +175,35 @@ Liu, J.%
 \PrintBackRefs{\CurrentBib}
 
 \bibitem [\protect \citeauthoryear {%
+Reitmayr%
+\ \BBA {} Schmalstieg%
+}{%
+Reitmayr%
+\ \BBA {} Schmalstieg%
+}{%
+{\protect \APACyear {{\protect \bibnodate {}}}}%
+}]{%
+reitmayr_schmalstieg}
+\APACinsertmetastar {%
+reitmayr_schmalstieg}%
+\begin{APACrefauthors}%
+Reitmayr, G.%
+\BCBT {}\ \BBA {} Schmalstieg, D.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{{\protect \bibnodate {}}}{}{}.
+\newblock
+{\BBOQ}\APACrefatitle {Mobile collaborative augmented reality} {Mobile
+  collaborative augmented reality}.{\BBCQ}
+\newblock
+\APACjournalVolNumPages{Proceedings IEEE and ACM International Symposium on
+  Augmented Reality}{}{}{}.
+\newblock
+\begin{APACrefDOI} \doi{10.1109/isar.2001.970521} \end{APACrefDOI}
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
 Tobien%
 }{%
 Tobien%
@@ -167,6 +226,40 @@ Tobien, J.%
 \begin{APACrefURL}
   \url{https://www.welt.de/wirtschaft/webwelt/article157051983/Woher-kommt-der-gigantische-Pokemon-Go-Hype.html}
   \end{APACrefURL}
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
+Whitlock%
+, Harnner%
+, Brubaker%
+, Kane%
+\BCBL {}\ \BBA {} Szafir%
+}{%
+Whitlock%
+\ \protect \BOthers {.}}{%
+{\protect \APACyear {2018}}%
+}]{%
+whitlock_harnner_brubaker_kane_szafir_2018}
+\APACinsertmetastar {%
+whitlock_harnner_brubaker_kane_szafir_2018}%
+\begin{APACrefauthors}%
+Whitlock, M.%
+, Harnner, E.%
+, Brubaker, J\BPBI R.%
+, Kane, S.%
+\BCBL {}\ \BBA {} Szafir, D\BPBI A.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{2018}{}{}.
+\newblock
+{\BBOQ}\APACrefatitle {Interacting with Distant Objects in Augmented Reality}
+  {Interacting with distant objects in augmented reality}.{\BBCQ}
+\newblock
+\APACjournalVolNumPages{2018 IEEE Conference on Virtual Reality and 3D User
+  Interfaces (VR)}{}{}{}.
+\newblock
+\begin{APACrefDOI} \doi{10.1109/vr.2018.8446381} \end{APACrefDOI}
 \PrintBackRefs{\CurrentBib}
 
 \end{thebibliography}

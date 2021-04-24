@@ -21,7 +21,7 @@
 \begin{center}
 	% größerer Abstand zwischen Bild und Text
 	\vspace{0.5cm}
-	\includegraphics[width=0.7\textwidth]{"Logo Universitaet Trier"} \\
+	\includegraphics[width=0.7\textwidth]{Logo_Universitaet_Trier} \\
 	\vspace{1cm}
 	
 	% Titel
@@ -52,7 +52,6 @@
 
 
 %------------------------------------------ Inhaltsverzeichnis ------------------------------------
-%\title{\textcolor{light blue} {\large{Inhaltsverzeichnis}}}
 \tableofcontents
 
 %------------------------------------------------------------------------------------------
@@ -122,13 +121,13 @@ Auch den Aspekt der digitalen Museen spielt hier eine wichtige Rolle. Die „Bes
 \section{Verwandte Arbeiten}
 In diesem Abschnitt werden Arbeiten zur vorgestellten Domäne besprochen, die sich mit der Gestaltung angemessener AR Schnittstellen, sowie der Verwendung entsprechender Techniken auseinander gesetzt haben.
 Eine Reihe von Arbeiten ergeben sich aus dem 2017 ausgetragenen IEEE 3DUI Contest. Dieser stellt die Rahmenbedingungen wie die Gestaltung der AR Applikation für Smartphones ohne die Nutzung weiterer Geräte oder Sensoren vorauszusetzen und dabei besonders auf die für die optimale Nutzerinteraktion notwendigen sechs Freiheitsgrade  (6DOF) zu achten. Dabei wird zwischen den Freiheitsgraden für das Positionieren und für die Rotation unterschieden. \\
-Das Interaktionsmodell HOT nutzt dabei bedruckte Karten, die zur Bereitstellung bestimmter Funktionen in das Kamerasichtfeld gebracht werden können 
-\cite{attanasio_2017}. 
+Das Interaktionsmodell HOT nutzt dabei bedruckte Karten, die zur Bereitstellung bestimmter Funktionen in das Kamerasichtfeld gebracht werden können \cite{attanasio_2017}. 
 Dadurch ergibt sich eine Entlastung der auf dem Bildschirm bereitzustellenden Tools zur Bearbeitung der Formen und somit eine Entdigitalisierung der Sicht, die den Eindruck der Koexistenz zwischen Realität und Virtualität erhöht. Zur Umsetzung der Steuerung wird dabei eine Manipulationstechnik angewandt, die auf dem Konzept von Direktheit und Unabhängigkeit basiert. Diese sieht die vollständige Manipulation von Objekten in 6 Freiheitsgraden über die Verwendung von lediglich zwei mit dem Bildschirm in Kontakt stehenden Fingern vor. Hierbei werden zwei Modi und zwei entsprechende Gesten eingeführt, wobei die Bewegungsmuster der beiden Finger für die Auswahl des entsprechenden Modus entscheidend ist \cite{liu_2012}. Dadurch hat der Nutzer größere Freiheiten bei der Steuerung und es ergibt sich eine angenehmere Verwendung des Geräts auf dem die AR Applikation läuft. \\
-Bei dem Interaktionskonzept T4T durchläuft die Interaktion drei Phasen, die als marker-tracking, cursor mode und tuning mode bezeichnet werden 
-\cite{cannavo_2020}.
-In der ersten Phase muss der Nutzer die Markierung mit der Kamera des Mobilen Geräts erfassen. Anschließend wechselt das System automatisch in den cursor mode, bei dem ein Cursor genutzt wird, dessen Position und Bewegung an die Ansicht des Gerätes gebunden ist, um Objekte auszuwählen. Wird der Cursor für eine kurze Zeit auf ein Objekt gerichtet, so wird das Objekt ausgewählt und man gelangt in den tuning mode. In diesem Modus wird ein Pop-Up Menü geöffnet, welches verschiedene Funktionalitäten zur Manipulation des Objekts bereitstellt \cite{cannavo_2017}. Damit werden die verfügbaren Optionen an die aktuelle Situation angepasst.
-
+Bei dem Interaktionskonzept T4T durchläuft die Interaktion drei Phasen, die als marker-tracking, cursor mode und tuning mode bezeichnet werden \cite{cannavo_2020}.
+In der ersten Phase muss der Nutzer die Markierung mit der Kamera des Mobilen Geräts erfassen. Anschließend wechselt das System automatisch in den cursor mode, bei dem ein Cursor genutzt wird, dessen Position und Bewegung an die Ansicht des Gerätes gebunden ist, um Objekte auszuwählen. Wird der Cursor für eine kurze Zeit auf ein Objekt gerichtet, so wird das Objekt ausgewählt und man gelangt in den tuning mode. In diesem Modus wird ein Pop-Up Menü geöffnet, welches verschiedene Funktionalitäten zur Manipulation des Objekts bereitstellt \cite{cannavo_2017}. Damit werden die verfügbaren Optionen an die aktuelle Situation angepasst. \\
+Aufgrund des kleinen Displays und der Batterie benötigt man andere Interaktionstechniken als mit einem Head-mounted Display. Dazu gibt es drei grundlegende Techniken zur Interaktion mit MAR nämlich touchbasierte, mid-air gestenbasierte und gerätebasierte Interakten. Bei der ersten Technik werden die Finger benutzt, um 3D Objekte zu manipulieren, wobei die Rotation das größte Problem ist. Mithilfe einer Gestenerkennung werden Gesten erkannt und es müssen Gesten definiert werden, die eine 3D Objekt Manipulation darstellen. Die dritte Interaktionstechnik benötigt die Attribute des Geräts, wie zum Beispiel Position und Winkel. Dabei dient das Gerät als ein Controller für den Benutzer. Dabei stellt die mid-air gestenbasierte Interaktionstechnik die intuitivsten Interaktionen bereit. Durch allen drei Interaktionstechniken können Nutzer die sechs Freiheitsgraden (6DOF) manipulieren. Jedoch ist die größte Schwierigkeit bei allen die Verdeckung \cite{goh_sunar_ismail_2019}. \\
+Es gibt natürlich auch andere Wege, wie man mit in der Augmented Reality interagiert. Eine Arbeit beschäftigte sich mit den Auswirkungen der Distanz zwischen den virtuellen Objekten und den Nutzer. In einem Experiment konnten Probanden mithilfe der Stimme, mehrere Gesten oder mit einer Fernbedienung (die Wii Remote) in einer Entfernung von 8, 12 und 16 Fuß mit den virtuellen Objekten interagieren. Die Probanden hatten als Aufgabe die virtuellen Objekte zu selektieren, rotieren und verschieben (Translation?). Dabei erzielte die Interaktionen mithilfe der Wii Remote die besten Ergebnisse bei allen drei Aufgaben. Auch die gestenbasierte Interaktionen schnitt bei den letzten beiden Aufgaben gut ab. In einer Umfrage der Probanden wurde festgestellt, dass gestenbasierte Interaktionen am einfachsten und die stimmbasierten Interaktionen am schwersten zu benutzen waren \cite{whitlock_harnner_brubaker_kane_szafir_2018}. \\
+In einer weiteren Forschungsarbeit wurden die Möglichkeiten der kollaborativen AR in durchgeführten Experimenten gezeigt. Ein positiver Aspekt des Mobile Augmented Reality ist die spontane Kollaboration zwischen Nutzer in Bezug auf Manipulation komplexer 3D Modelle. Der große Nachteil von CSCW Desktop Applikationen ist, dass die Benutzer untereinander und von ihren Werkzeugen getrennt werden. Augemnted Reality beseitigt diese Nachteile, da die Werkzeuge der Nutzer in der wirklichen Umgebung eingebettet werden. Zudem können mit AR persönliche Arbeitsbereiche erschaffen werden und die Benutzer interagieren mit den vorhandenen Funktionen auf einer natürlichen Weise \cite{reitmayr_schmalstieg}.
 
 
 %-------------------------------------------------------------------------------------------------------
@@ -142,7 +141,26 @@ In der ersten Phase muss der Nutzer die Markierung mit der Kamera des Mobilen Ge
 %----------------------------------------------Projektzielsetzung--------------------------------------
 
 \section{Projektzielsetzung}
-	In Bearbeitung 
+Ideen: \\
+%
+\begin{enumerate}
+
+\item Die Karten als Beispiele 
+\item Das Unity Video als Quelle benutzen. Damit man keine langen Erklärungen zum Nachbauen lesen muss. \\
+Vielleicht 3 bis 6 Beispiele mit Animationen... \\
+Vielleicht ganz normale Spielkarten nehmen als Beispiele. Easy Access.
+\item Man soll die Farben ändern können 
+\item Selektieren und Rotieren per Hand? 
+\item Verschieben durch Gerät? 
+\item Screenshots aufnehmen \\
+Wo speichern wir die hin, sodass der Nutzer diese schnell findet.
+\item Video aufnehmen 
+Selbst implementieren, falls möglich oder Unity Asset Store.
+\item Falls noch Zeit bleibt: Kollaboration \\
+Zusammenbauen macht Spaß :)
+
+\end{enumerate}
+	
 	
 
 
