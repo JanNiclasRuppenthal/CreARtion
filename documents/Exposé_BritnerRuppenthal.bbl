@@ -144,6 +144,37 @@ Goh, E\BPBI S.%
 \PrintBackRefs{\CurrentBib}
 
 \bibitem [\protect \citeauthoryear {%
+Guo%
+, Mcmahan%
+\BCBL {}\ \BBA {} Weyers%
+}{%
+Guo%
+\ \protect \BOthers {.}}{%
+{\protect \APACyear {2017}}%
+}]{%
+guo_mcmahan_weyers_2017}
+\APACinsertmetastar {%
+guo_mcmahan_weyers_2017}%
+\begin{APACrefauthors}%
+Guo, R.%
+, Mcmahan, R\BPBI P.%
+\BCBL {}\ \BBA {} Weyers, B.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{2017}{}{}.
+\newblock
+{\BBOQ}\APACrefatitle {Augmented Reality exhibits of constructive art: 8th
+  annual 3DUI Contest} {Augmented reality exhibits of constructive art: 8th
+  annual 3dui contest}.{\BBCQ}
+\newblock
+\APACjournalVolNumPages{2017 IEEE Symposium on 3D User Interfaces
+  (3DUI)}{}{}{}.
+\newblock
+\begin{APACrefDOI} \doi{10.1109/3dui.2017.7893367} \end{APACrefDOI}
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
 Liu%
 , Au%
 , Fu%
@@ -181,7 +212,7 @@ Reitmayr%
 Reitmayr%
 \ \BBA {} Schmalstieg%
 }{%
-{\protect \APACyear {{\protect \bibnodate {}}}}%
+{\protect \APACyear {2001}}%
 }]{%
 reitmayr_schmalstieg}
 \APACinsertmetastar {%
@@ -192,7 +223,7 @@ Reitmayr, G.%
 \end{APACrefauthors}%
 \unskip\
 \newblock
-\APACrefYearMonthDay{{\protect \bibnodate {}}}{}{}.
+\APACrefYearMonthDay{2001}{}{}.
 \newblock
 {\BBOQ}\APACrefatitle {Mobile collaborative augmented reality} {Mobile
   collaborative augmented reality}.{\BBCQ}
@@ -226,6 +257,29 @@ Tobien, J.%
 \begin{APACrefURL}
   \url{https://www.welt.de/wirtschaft/webwelt/article157051983/Woher-kommt-der-gigantische-Pokemon-Go-Hype.html}
   \end{APACrefURL}
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
+Unity%
+}{%
+Unity%
+}{%
+{\protect \APACyear {2019}}%
+}]{%
+youtube_unity}
+\APACinsertmetastar {%
+youtube_unity}%
+\begin{APACrefauthors}%
+Unity.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{2019}{Apr}{30}.
+\newblock
+\APACrefbtitle {Cross-Platform AR in Unity! – AR Foundation Overview.}
+  {Cross-platform ar in unity! – ar foundation overview.}
+\newblock
+\begin{APACrefURL} \url{https://youtu.be/ml9qVRdEH4k?t=189} \end{APACrefURL}
 \PrintBackRefs{\CurrentBib}
 
 \bibitem [\protect \citeauthoryear {%
