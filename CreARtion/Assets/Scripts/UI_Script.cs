@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -10,6 +10,12 @@ public class UI_Script : MonoBehaviour
     private int number = 1;
     private string path;
 
+    //Video
+    public Button mybutton;
+    public Sprite stop_sprite;
+    public Sprite record_sprite;
+    private bool vflag = false;
+    
     public Text infos;
 
     // Start is called before the first frame update
@@ -50,7 +56,15 @@ public class UI_Script : MonoBehaviour
 
     public void ButtonVideocapture_Click()
     {
-        Debug.Log("Capture a Video");
-        infos.text = "Video";
+        vflag = !vflag;
+        if(vflag){
+   	      Debug.Log("Capture a Video");
+        	      infos.text = "Video";
+	      mybutton.image.overrideSprite = record_sprite;
+   	}else{
+	      Debug.Log("Capturing stopped");
+	      infos.text = "";
+	      mybutton.image.overrideSprite = stop_sprite;
+	}
     }
 }
