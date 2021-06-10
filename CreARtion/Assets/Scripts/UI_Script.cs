@@ -30,6 +30,8 @@ public class UI_Script : MonoBehaviour
     public GameObject cylinderStagePositioner;
     public GameObject sphereStagePositioner;
     public GameObject capsuleStagePositioner;
+    public GameObject pyramidStagePositioner;
+    public GameObject coneStagePositioner;
 
 
     // Start is called before the first frame update
@@ -42,6 +44,8 @@ public class UI_Script : MonoBehaviour
         cylinderStagePositioner.SetActive(false);
         sphereStagePositioner.SetActive(false);
         capsuleStagePositioner.SetActive(false);
+        pyramidStagePositioner.SetActive(false);
+        coneStagePositioner.SetActive(false);
     }
 
     // Update is called once per frame
@@ -79,12 +83,12 @@ public class UI_Script : MonoBehaviour
         if(vflag){
             Debug.Log("Capture a Video");
             infos.text = "Video";
-            buttonVideocapture.GetComponentInChildren<Text>().text = "";
+            //buttonVideocapture.GetComponentInChildren<Text>().text = "";
             buttonVideocapture.image.overrideSprite = record_sprite;
    	    }else{
             Debug.Log("Capturing stopped");
             infos.text = "";
-            buttonVideocapture.GetComponentInChildren<Text>().text = "Rec";
+            //buttonVideocapture.GetComponentInChildren<Text>().text = "Rec";
             buttonVideocapture.image.overrideSprite = stop_sprite;
 	    }
     }
@@ -100,6 +104,8 @@ public class UI_Script : MonoBehaviour
         cylinderStagePositioner.SetActive(false);
         sphereStagePositioner.SetActive(false);
         capsuleStagePositioner.SetActive(false);
+        pyramidStagePositioner.SetActive(false);
+        coneStagePositioner.SetActive(false);
     }
 
     // In this method you enable cylinder stage and positioner and
@@ -110,6 +116,8 @@ public class UI_Script : MonoBehaviour
         cylinderStagePositioner.SetActive(true);
         sphereStagePositioner.SetActive(false);
         capsuleStagePositioner.SetActive(false);
+        pyramidStagePositioner.SetActive(false);
+        coneStagePositioner.SetActive(false);
     }
 
     // In this method you enable sphere stage and positioner and
@@ -120,6 +128,8 @@ public class UI_Script : MonoBehaviour
         cylinderStagePositioner.SetActive(false);
         sphereStagePositioner.SetActive(true);
         capsuleStagePositioner.SetActive(false);
+        pyramidStagePositioner.SetActive(false);
+        coneStagePositioner.SetActive(false);
     }
 
     // In this method you enable capsule stage and positioner and
@@ -130,6 +140,32 @@ public class UI_Script : MonoBehaviour
         cylinderStagePositioner.SetActive(false);
         sphereStagePositioner.SetActive(false);
         capsuleStagePositioner.SetActive(true);
+        pyramidStagePositioner.SetActive(false);
+        coneStagePositioner.SetActive(false);
+    }
+
+    // In this method you enable pyramid stage and positioner and
+    // disable all other stages and positioners
+    public void ButtonPyramid_Click()
+    {
+        cubeStagePositioner.SetActive(false);
+        cylinderStagePositioner.SetActive(false);
+        sphereStagePositioner.SetActive(false);
+        capsuleStagePositioner.SetActive(false);
+        pyramidStagePositioner.SetActive(true);
+        coneStagePositioner.SetActive(false);
+    }
+
+    // In this method you enable cone stage and positioner and
+    // disable all other stages and positioners
+    public void ButtonCone_Click()
+    {
+        cubeStagePositioner.SetActive(false);
+        cylinderStagePositioner.SetActive(false);
+        sphereStagePositioner.SetActive(false);
+        capsuleStagePositioner.SetActive(false);
+        pyramidStagePositioner.SetActive(false);
+        coneStagePositioner.SetActive(true);
     }
 
 }
