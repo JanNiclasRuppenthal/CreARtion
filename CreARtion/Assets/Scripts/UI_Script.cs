@@ -16,6 +16,9 @@ public class UI_Script : MonoBehaviour
     public Sprite stop_sprite;
     public Sprite record_sprite;
     private bool vflag = false;
+
+    // Switch Interaction mode
+    private bool selectMode = true; 
     
     public Text infos;
 
@@ -33,6 +36,16 @@ public class UI_Script : MonoBehaviour
     public GameObject pyramidStagePositioner;
     public GameObject coneStagePositioner;
 
+    // List of Buttons and Lists of different modes
+    // Selection mode
+    public GameObject scrollableListForms;
+
+    // Manipulation mode
+    public GameObject deleteButton;
+    public GameObject XButton;
+    public GameObject scrollableListManipulation;
+
+
 
     // Start is called before the first frame update
     void Start()
@@ -46,6 +59,12 @@ public class UI_Script : MonoBehaviour
         capsuleStagePositioner.SetActive(false);
         pyramidStagePositioner.SetActive(false);
         coneStagePositioner.SetActive(false);
+
+	//Select Select mode at beginning
+	scrollableListForms.SetActive(true);
+	deleteButton.SetActive(false);
+	XButton.SetActive(false);
+	scrollableListManipulation.SetActive(false);
     }
 
     // Update is called once per frame
@@ -168,4 +187,13 @@ public class UI_Script : MonoBehaviour
         coneStagePositioner.SetActive(true);
     }
 
+    // Switch Interaction mode
+    public void switchMode()
+    {
+        selectMode = !selectMode;
+        scrollableListForms.SetActive(selectMode);
+        deleteButton.SetActive(!selectMode);
+        XButton.SetActive(!selectMode);
+        scrollableListManipulation.SetActive(!selectMode);
+    }
 }
