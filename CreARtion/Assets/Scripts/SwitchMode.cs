@@ -37,13 +37,13 @@ public class SwitchMode : MonoBehaviour
 
 				baseObject = hit.collider.gameObject;
 
-				float r = 255 - baseObject.GetComponent<MeshRenderer>().material.color.r;
-				float g = 255 - baseObject.GetComponent<MeshRenderer>().material.color.g;
-				float b = 255 - baseObject.GetComponent<MeshRenderer>().material.color.b;
+				float r = 1 - baseObject.GetComponent<MeshRenderer>().material.color.r;
+				float g = 1 - baseObject.GetComponent<MeshRenderer>().material.color.g;
+				float b = 1 - baseObject.GetComponent<MeshRenderer>().material.color.b;
 
 
 				outline.OutlineMode = Outline.Mode.OutlineAll;
-				outline.OutlineColor = new Color(r, g, b);
+				outline.OutlineColor = new Color(r, g, b, 1);
 				outline.OutlineWidth = 5f;
 
 
@@ -74,8 +74,9 @@ public class SwitchMode : MonoBehaviour
 
 
 				outline.OutlineMode = Outline.Mode.OutlineAll;
-				outline.OutlineColor = new Color(r, g, b);
+				outline.OutlineColor = new Color(r, g, b, 1);
 				outline.OutlineWidth = 5f;
+
 			}
 		}
 	}
