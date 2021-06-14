@@ -13,8 +13,11 @@ public class SwitchMode : MonoBehaviour
 	public GameObject XButton;
 	public GameObject scrollableListManipulation;
 
-	// Update is called once per frame
-	void Update()
+
+	public GameObject baseObject;
+
+    // Update is called once per frame
+    void Update()
 	{
 		// Touching the Objects
 		if (Input.GetMouseButton(0))
@@ -30,7 +33,20 @@ public class SwitchMode : MonoBehaviour
 				// Your are not able to place an object anymore
 				switchToManipulationmode();
 
-				hit.collider.GetComponent<Transform>().localScale = new Vector3(0.15f, 0.15f, 0.15f);
+				var outline = hit.collider.gameObject.GetComponent<Outline>();
+
+				baseObject = hit.collider.gameObject;
+
+				float r = 255 - baseObject.GetComponent<MeshRenderer>().material.color.r;
+				float g = 255 - baseObject.GetComponent<MeshRenderer>().material.color.g;
+				float b = 255 - baseObject.GetComponent<MeshRenderer>().material.color.b;
+
+
+				outline.OutlineMode = Outline.Mode.OutlineAll;
+				outline.OutlineColor = new Color(r, g, b);
+				outline.OutlineWidth = 5f;
+
+
 
 			}
 		}
@@ -47,11 +63,19 @@ public class SwitchMode : MonoBehaviour
 				// Your are not able to place an object anymore
 				switchToManipulationmode();
 
-				// Reaction of the phone
-				// So that I know if it works
-				Handheld.Vibrate();
 
-				hit.collider.GetComponent<Transform>().localScale = new Vector3(0.15f, 0.15f, 0.15f);
+				var outline = hit.collider.gameObject.GetComponent<Outline>();
+
+				baseObject = hit.collider.gameObject;
+
+				float r = 255 - baseObject.GetComponent<MeshRenderer>().material.color.r;
+				float g = 255 - baseObject.GetComponent<MeshRenderer>().material.color.g;
+				float b = 255 - baseObject.GetComponent<MeshRenderer>().material.color.b;
+
+
+				outline.OutlineMode = Outline.Mode.OutlineAll;
+				outline.OutlineColor = new Color(r, g, b);
+				outline.OutlineWidth = 5f;
 			}
 		}
 	}
@@ -65,7 +89,14 @@ public class SwitchMode : MonoBehaviour
 		deleteButton.SetActive(false);
 		XButton.SetActive(false);
 		scrollableListManipulation.SetActive(false);
-    }
+
+		var outline = baseObject.GetComponent<Outline>();
+
+
+		outline.OutlineMode = Outline.Mode.OutlineAll;
+		outline.OutlineColor = new Color(0,0,0,0);
+		outline.OutlineWidth = 5f;
+	}
 
 	// There is no button which call this function
 	// Thats why it is private
@@ -77,4 +108,11 @@ public class SwitchMode : MonoBehaviour
 		XButton.SetActive(true);
 		scrollableListManipulation.SetActive(true);
 	}
+
+
+	public void deleteButton_OnClick()
+    {
+		Destroy(baseObject);
+		switchToSelectionmode();
+    }
 }

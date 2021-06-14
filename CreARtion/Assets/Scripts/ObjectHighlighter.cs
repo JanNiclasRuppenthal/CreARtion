@@ -12,19 +12,16 @@ public class ObjectHighlighter : MonoBehaviour
     private GameObject baseObject;
 
     // Start is called before the first frame update
-    void Start () {
-		meshRenderer 		= baseObject.GetComponent<MeshRenderer>();
-		originalMaterial 	= meshRenderer.material;
-		
-		Color blue 		= new Color(240.0f,248.0f,255.0f,0.5f);
-		blueMaterial  		= new Material(Shader.Find("Transparent/Parallax Specular"));
-		blueMaterial.color 	= blue;
+    void Start () 
+	{
+
     }
 
 	public void setBaseObject(GameObject obj)
     {
 		baseObject = obj;
-    }
+
+	}
 	
     // Update is called once per frame
     void Update () {
@@ -51,13 +48,11 @@ public class ObjectHighlighter : MonoBehaviour
 		Debug.Log("IT SHOULD BE BLUE");
 
 		meshRenderer = baseObject.GetComponent<MeshRenderer>();
-		originalMaterial = meshRenderer.material;
+		//originalMaterial = meshRenderer.material;
 
-		Color blue = new Color(240.0f, 248.0f, 255.0f, 0.5f);
-		blueMaterial = new Material(Shader.Find("Transparent/Parallax Specular"));
-		blueMaterial.color = blue;
-
-		baseObject.GetComponent<MeshRenderer>().material = blueMaterial;
+		Color blue = new Color(240.0f, 0.0f, 0.0f, 1.0f);
+		//blueMaterial = new Material(Shader.Find("Transparent/Parallax Specular"));
+		meshRenderer.material.color = blue;
 
 		Debug.Log(baseObject.GetComponent<MeshRenderer>().material.color);
 	}

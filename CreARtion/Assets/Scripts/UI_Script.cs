@@ -50,7 +50,6 @@ public class UI_Script : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        //path = GetAndroidExternalStoragePath();
 
         // enable cube stage and positioner as default
         cubeStagePositioner.SetActive(true);
@@ -72,18 +71,6 @@ public class UI_Script : MonoBehaviour
     {
        
     }
-
-    //private string GetAndroidExternalStoragePath()
-    //{
-    //    if (Application.platform != RuntimePlatform.Android)
-    //        return Application.persistentDataPath;
-
-    //    var jc = new AndroidJavaClass("android.os.Environment");
-    //    var path = jc.CallStatic<AndroidJavaObject>("getExternalStoragePublicDirectory",
-    //        jc.GetStatic<string>("DIRECTORY_DCIM"))
-    //        .Call<string>("getAbsolutePath");
-    //    return path;
-    //}
 
     public void ButtonScreenshot_Click()
     {
