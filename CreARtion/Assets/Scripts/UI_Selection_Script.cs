@@ -8,8 +8,13 @@ using System;
 
 public class UI_Selection_Script : MonoBehaviour
 {
+
+    // two different uis
+    public GameObject uiSelectionmode;
+    public GameObject uiManipulationmode;
+
     // variables for screenshots
-    private int number = 1;
+    private int number;
     private int screenshotTimer = 0;
     private int videocapturingTimerSeconds = 0;
     private int videocapturingTimerMinutes = 0;
@@ -21,8 +26,7 @@ public class UI_Selection_Script : MonoBehaviour
     public Sprite record_sprite;
     private bool vflag = false;
 
-    // Switch Interaction mode
-    private bool selectMode = true;
+
 
     public Text helpfulInformations;
 
@@ -40,12 +44,8 @@ public class UI_Selection_Script : MonoBehaviour
     // Selection mode
     public GameObject scrollableListForms;
 
-    // Manipulation mode
-    public GameObject deleteButton;
-    public GameObject XButton;
-    public GameObject scrollableListManipulation;
 
-
+    // enumeration of all modes
     private enum Objects
     {
         Cube,
@@ -67,21 +67,22 @@ public class UI_Selection_Script : MonoBehaviour
         // enable cube stage and positioner as default
         setStageAndPositioner(0);
 
-	    //Select Select mode at beginning
-	    scrollableListForms.SetActive(true);
-	    deleteButton.SetActive(false);
-	    XButton.SetActive(false);
-	    scrollableListManipulation.SetActive(false);
+        //Select Select mode at beginning
+        uiSelectionmode.SetActive(true);
+        // and disable ui of manipulationmode
+        uiManipulationmode.SetActive(false);
 
         enumObjects = Objects.Cube;
+
+        // save the number of shots
+        if (!PlayerPrefs.HasKey("numberOfShots"))
+        {
+            PlayerPrefs.SetInt("numberOfShots", 0);
+        }
     }
 
-
-    public void Update()
-    {
-        
-    }
-
+    // set one stage and positioner as active
+    // and disable all other stages and positioners
     private void setStageAndPositioner(int index)
     {
         for (int i = 0; i < stageAndPositioners.Length; i++)
@@ -100,32 +101,65 @@ public class UI_Selection_Script : MonoBehaviour
 
     public void ButtonScreenshot_Click()
     {
+        // center the position of the text
+        //helpfulInformations.transform.position = new Vector2(672f, 31.0f);
+
+        // new text
         helpfulInformations.text = "Screenshot taken in " + (3 - screenshotTimer);
+
+        // call function after 1 second
         Invoke("takeScreenshot", 1);
     }
 
     private void takeScreenshot()
     {
+        // one second later
         screenshotTimer++;
 
+        // after 3 seconds, it should take a screenshot
         if (screenshotTimer <= 3)
         {
+            // new text
             helpfulInformations.text = "Screenshot taken in " + (3 - screenshotTimer);
+
+            // call function after 1 second
             Invoke("takeScreenshot", 1);
 
         }
         else
         {
-            string final_ScreenshotText = "CreARtion " + DateTime.Now.ToString("MM/dd/yyyy") + " " + number + ".png";
-            number++;
-            ScreenCapture.CaptureScreenshot(final_ScreenshotText);
+            // number of screenshots should always be three digits
+            string numberUnderTenOrHundred = "";
+            numberUnderTenOrHundred = (number < 100 && number > 10 ? "0" : "00");
 
+            // file name
+            string final_ScreenshotText = "CreARtion " +  " Screenshot " + numberUnderTenOrHundred + PlayerPrefs.GetInt("numberOfShots") + ".png";
+
+            // save the new number of shots
+            PlayerPrefs.SetInt("numberOfShots", ++number);
+
+            // disable the uiSelectionmode
+            // capture a screenshot
+            // enable the uiSelectionmode
+            uiSelectionmode.SetActive(false);
+            ScreenCapture.CaptureScreenshot(final_ScreenshotText);
+            Invoke("enableSelectionmode", 0.1f);
+
+            // new text
             helpfulInformations.text = "Screenshot was taken.";
 
+            // reset variable
             screenshotTimer = 0;
 
+            // call function after 1 second
             Invoke("changeInformationOnText", 1);
         }
+    }
+
+    // enable the selectionmode ui
+    private void enableSelectionmode()
+    {
+        uiSelectionmode.SetActive(true);
     }
 
 
@@ -136,8 +170,14 @@ public class UI_Selection_Script : MonoBehaviour
             // video is stopped
             buttonVideocapture.image.overrideSprite = record_sprite;
 
+            
+            // set a new text for taking a screenshot
             helpfulInformations.text = "Recording: 00:00";
+            // center the text
+            helpfulInformations.transform.position = new Vector2(697.7f, 31.0f);
 
+
+            // call function after 1 second
             Invoke("videoTimer", 1);
 
         }
@@ -153,6 +193,7 @@ public class UI_Selection_Script : MonoBehaviour
         // video is stopped
         if (!vflag)
         {
+            //helpfulInformations.transform.position = new Vector2(675f, 31.0f);
             helpfulInformations.text = "Recording is stopped.";
 
             // default values
@@ -165,6 +206,7 @@ public class UI_Selection_Script : MonoBehaviour
 
         videocapturingTimerSeconds++;
 
+        // show the right time
         if (videocapturingTimerMinutes < 10)
         {
 
@@ -199,6 +241,7 @@ public class UI_Selection_Script : MonoBehaviour
             }
         }
 
+        // call function after 1 second
         Invoke("videoTimer", 1);
     }
 
@@ -269,6 +312,10 @@ public class UI_Selection_Script : MonoBehaviour
     // this method will be called in each click() method
     private void changeInformationOnText()
     {
+        // set the old position
+        //helpfulInformations.transform.position = new Vector2(640.5f, 44.1f);
+
+        // change the text to the information how to place objects
         helpfulInformations.text = "Tap to place " + enumObjects.ToString() + ".\nOr tap on object to manipulate.";
     }
 }
