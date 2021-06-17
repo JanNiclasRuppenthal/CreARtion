@@ -40,7 +40,7 @@ MonoBehaviour:
     arcoreRequirement: 1
     autoImportArcore: 1
   playmode:
-    mSequencePath: 
+    mSequencePath: Recording
     playModeType: 0
   webcam:
     renderTextureLayer: 30

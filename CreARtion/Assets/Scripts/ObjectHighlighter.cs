@@ -4,51 +4,61 @@ using UnityEngine;
 
 public class ObjectHighlighter : MonoBehaviour
 {
-    bool isHighlighted = false;
-    Material originalMaterial;
-    Material blueMaterial;
-    MeshRenderer meshRenderer;
+	private bool isHighlighted = false;
+	private Material originalMaterial;
+	private Material blueMaterial;
+	private MeshRenderer meshRenderer;
 
-    GameObject baseObject;
-    string obj_name;
+    private GameObject baseObject;
 
     // Start is called before the first frame update
-    void Start () {
-		obj_name 		= this.gameObject.name;
-		baseObject 		= GameObject.Find( obj_name );
-		meshRenderer 		= baseObject.GetComponent<MeshRenderer>();
-		originalMaterial 	= meshRenderer.material;
-		
-		Color blue 		= new Color(240.0f,248.0f,255.0f,0.5f);
-		blueMaterial  		= new Material(Shader.Find("Transparent/Parallax Specular"));
-		blueMaterial.color 	= blue;
+    void Start () 
+	{
+
     }
+
+	public void setBaseObject(GameObject obj)
+    {
+		baseObject = obj;
+
+	}
 	
     // Update is called once per frame
     void Update () {
 	
     }
 	
-    void OnClick(){
-	Debug.Log("OMD "+obj_name);
-	isHighlighted = !isHighlighted;
-
-         // TODO: change Mode with UI_Script Method
+    void OnClick()
+	{
+		isHighlighted = !isHighlighted;
 		
-	if( isHighlighted == true ){	
-		HighlightBlue();
-	}
-	if ( isHighlighted==false ){		
-		RemoveHighlight();
-	}
+		if( isHighlighted == true )
+		{	
+			HighlightBlue();
+		}
+		if ( isHighlighted==false )
+		{		
+			RemoveHighlight();
+		}
     }
 	
-    void HighlightBlue(){
-	meshRenderer.material = blueMaterial;
-	Debug.Log("IT SHOULD BE BLUE");
-    }
+    public void HighlightBlue()
+	{
+		//meshRenderer.material = blueMaterial;
+		Debug.Log("IT SHOULD BE BLUE");
+
+		meshRenderer = baseObject.GetComponent<MeshRenderer>();
+		//originalMaterial = meshRenderer.material;
+
+		Color blue = new Color(240.0f, 0.0f, 0.0f, 1.0f);
+		//blueMaterial = new Material(Shader.Find("Transparent/Parallax Specular"));
+		meshRenderer.material.color = blue;
+
+		Debug.Log(baseObject.GetComponent<MeshRenderer>().material.color);
+	}
 	
-    void RemoveHighlight(){
-	meshRenderer.material = originalMaterial;
+    public void RemoveHighlight()
+	{
+		meshRenderer.material = originalMaterial;
     }
 }
