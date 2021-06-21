@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,8 +8,8 @@ public class SwitchMode : MonoBehaviour
 	public GameObject listStagesPositioners;
 	public GameObject uiSelectionmode;
 	public GameObject uiManipulationmode;
-
-
+	public GameObject uiRotation;
+	
 	private GameObject baseObject;
 
     // Update is called once per frame
@@ -84,13 +84,14 @@ public class SwitchMode : MonoBehaviour
 
 	// the x-button in the manipulation mode calls this function
 	public void switchToSelectionmode()
-    {
+    	{
 		// activate stages and positioner and the ui of the selectionmode
 		listStagesPositioners.SetActive(true);
 		uiSelectionmode.SetActive(true);
 
-		// disable the manipulationmode
+		// disable the manipulationmode and the UIs of the manipulationstools
 		uiManipulationmode.SetActive(false);
+		uiRotation.SetActive(false);
 
 
 		// there is no outline after you enter the selectionmode
@@ -122,4 +123,9 @@ public class SwitchMode : MonoBehaviour
 		// switch to the selectionmode
 		switchToSelectionmode();
     }
+
+	// Getter
+	public GameObject getBaseObject(){
+		return baseObject;
+	}
 }

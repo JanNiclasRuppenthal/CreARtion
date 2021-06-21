@@ -170,11 +170,10 @@ public class UI_Selection_Script : MonoBehaviour
             // video is stopped
             buttonVideocapture.image.overrideSprite = record_sprite;
 
-            
             // set a new text for taking a screenshot
             helpfulInformations.text = "Recording: 00:00";
             // center the text
-            helpfulInformations.transform.position = new Vector2(697.7f, 31.0f);
+            //helpfulInformations.transform.position = new Vector2(697.7f, 31.0f);
 
 
             // call function after 1 second
