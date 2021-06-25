@@ -39,6 +39,8 @@ public class UI_Selection_Script : MonoBehaviour
     // List of stages and positioners
     public int size = 6;
     public GameObject[] stageAndPositioners = new GameObject[6];
+    public AnchorBehaviour[] stages = new AnchorBehaviour[6];
+    public ContentPositioningBehaviour[] positioner = new ContentPositioningBehaviour[6];
 
     // List of Buttons and Lists of different modes
     // Selection mode
@@ -58,6 +60,49 @@ public class UI_Selection_Script : MonoBehaviour
 
     private Objects enumObjects;
 
+    public GameObject test;
+
+
+    private void Update()
+    {
+
+        // Touching the Objects
+        if (Input.GetMouseButton(0))
+        {
+            setStage();
+        }
+        else if((Input.touchCount > 0 && Input.touches[0].phase == TouchPhase.Began))
+        {
+            setStage();
+        }
+    }
+
+    private void setStage()
+    {
+        switch (enumObjects)
+        {
+            case Objects.Cube:
+                positioner[0].AnchorStage = stages[0];
+                break;
+            case Objects.Cylinder:
+                positioner[1].AnchorStage = stages[1];
+                break;
+            case Objects.Sphere:
+                positioner[2].AnchorStage = stages[2];
+                break;
+            case Objects.Capsule:
+                positioner[3].AnchorStage = stages[3];
+                break;
+            case Objects.Pyramid:
+                positioner[4].AnchorStage = stages[4];
+                break;
+            case Objects.Cone:
+                positioner[5].AnchorStage = stages[5];
+                break;
+
+            default: break;
+        }
+    }
 
 
     // Start is called before the first frame update

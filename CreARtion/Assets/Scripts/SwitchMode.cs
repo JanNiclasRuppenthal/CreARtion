@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Vuforia;
 
 public class SwitchMode : MonoBehaviour
 {
@@ -9,82 +11,72 @@ public class SwitchMode : MonoBehaviour
 	public GameObject uiSelectionmode;
 	public GameObject uiManipulationmode;
 	public GameObject uiRotation;
+
 	
 	private GameObject baseObject;
 
-    // Update is called once per frame
-    void Update()
+	private ArrayList listOfMarkedObjects = new ArrayList();
+
+
+	// Update is called once per frame
+	void Update()
 	{
-		// Touching the Objects
+
+
+		// Touching Objects
 		if (Input.GetMouseButton(0))
 		{
 			Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
-			// look for Hit
-			RaycastHit hit = new RaycastHit();
-			if (Physics.Raycast(ray, out hit))
-			{
-
-				// Deactivate all Stages and Positioners
-				// Your are not able to place an object anymore
-				switchToManipulationmode();
-
-				var outline = hit.collider.gameObject.GetComponent<Outline>();
-
-				// save the object
-				baseObject = hit.collider.gameObject;
-
-				// get the complementary colour as outline of this object
-				float r = 1 - baseObject.GetComponent<MeshRenderer>().material.color.r;
-				float g = 1 - baseObject.GetComponent<MeshRenderer>().material.color.g;
-				float b = 1 - baseObject.GetComponent<MeshRenderer>().material.color.b;
-
-				// set the new outline
-				outline.OutlineMode = Outline.Mode.OutlineAll;
-				outline.OutlineColor = new Color(r, g, b, 1);
-				outline.OutlineWidth = 5f;
-
-
-
-			}
+			markObjects(ray);
 		}
 		else if (Input.touchCount > 0 && Input.touches[0].phase == TouchPhase.Began)
-		{
+        {
 			Ray ray = Camera.main.ScreenPointToRay(Input.GetTouch(0).position);
-
-			// look for Hit
-			RaycastHit hit = new RaycastHit();
-			if (Physics.Raycast(ray, out hit))
-			{
-
-				// Deactivate all Stages and Positioners
-				// Your are not able to place an object anymore
-				switchToManipulationmode();
+			markObjects(ray);
+		}
+	}
 
 
-				var outline = hit.collider.gameObject.GetComponent<Outline>();
+	private void markObjects(Ray ray)
+    {
 
-				// save the object
-				baseObject = hit.collider.gameObject;
+		// look for Hit
+		RaycastHit hit = new RaycastHit();
+		if (Physics.Raycast(ray, out hit))
+		{
 
-				// get the complementary colour as outline of this object
-				float r = 1 - baseObject.GetComponent<MeshRenderer>().material.color.r;
-				float g = 1 - baseObject.GetComponent<MeshRenderer>().material.color.g;
-				float b = 1 - baseObject.GetComponent<MeshRenderer>().material.color.b;
+			// Deactivate all Stages and Positioners
+			// Your are not able to place an object anymore
+			switchToManipulationmode();
 
-				// set the new outline
-				outline.OutlineMode = Outline.Mode.OutlineAll;
-				outline.OutlineColor = new Color(r, g, b, 1);
-				outline.OutlineWidth = 5f;
 
-			}
+			var outline = hit.collider.gameObject.GetComponent<Outline>();
+
+			// save the object
+			baseObject = hit.collider.gameObject;
+
+
+			// get the complementary colour as outline of this object
+			float r = 1 - baseObject.GetComponent<MeshRenderer>().material.color.r;
+			float g = 1 - baseObject.GetComponent<MeshRenderer>().material.color.g;
+			float b = 1 - baseObject.GetComponent<MeshRenderer>().material.color.b;
+
+			// set the new outline
+			outline.OutlineMode = Outline.Mode.OutlineAll;
+			outline.OutlineColor = new Color(r, g, b, 1);
+			outline.OutlineWidth = 5f;
+
+			// save the object in ArrayList
+			listOfMarkedObjects.Add(baseObject);
+
 		}
 	}
 
 
 	// the x-button in the manipulation mode calls this function
 	public void switchToSelectionmode()
-    	{
+    {
 		// activate stages and positioner and the ui of the selectionmode
 		listStagesPositioners.SetActive(true);
 		uiSelectionmode.SetActive(true);
@@ -95,11 +87,17 @@ public class SwitchMode : MonoBehaviour
 
 
 		// there is no outline after you enter the selectionmode
-		var outline = baseObject.GetComponent<Outline>();
+		foreach(GameObject item in listOfMarkedObjects)
+        {
+			var outline = item.GetComponent<Outline>();
 
-		outline.OutlineMode = Outline.Mode.OutlineAll;
-		outline.OutlineColor = new Color(0,0,0,0);
-		outline.OutlineWidth = 5f;
+			outline.OutlineMode = Outline.Mode.OutlineAll;
+			outline.OutlineColor = new Color(0, 0, 0, 0);
+			outline.OutlineWidth = 5f;
+		}
+
+		listOfMarkedObjects.Clear();
+
 	}
 
 	// There is no button which call this function
@@ -117,15 +115,33 @@ public class SwitchMode : MonoBehaviour
 
 	public void deleteButton_OnClick()
     {
+
 		// destroy object
-		Destroy(baseObject);
+
+		ArrayList listIndex = new ArrayList();
+		foreach (GameObject item in listOfMarkedObjects)
+		{
+			GameObject temp = item;
+			Destroy(temp);
+
+			listIndex.Add(item);
+
+		}
+
+		foreach (GameObject item in listIndex)
+        {
+			listOfMarkedObjects.Remove(item);
+        }
+
+		listIndex.Clear();
+
 
 		// switch to the selectionmode
 		switchToSelectionmode();
     }
 
 	// Getter
-	public GameObject getBaseObject(){
-		return baseObject;
+	public ArrayList getListOfMarkedObjects(){
+		return listOfMarkedObjects;
 	}
 }

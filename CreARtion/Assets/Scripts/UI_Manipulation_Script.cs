@@ -12,9 +12,18 @@ public class UI_Manipulation_Script : MonoBehaviour
     public GameObject TextContainer;
     public Text helpfulInformations;
     public GameObject scrollableListManipulations;
-    
+
+
+
     //Rotation-UI
     public GameObject uiRotation;
+
+    // childs of Rotation UI
+    public CircularRangeControlX circularX;
+    public CircularRangeControlY circularY;
+    public CircularRangeControlZ circularZ;
+
+
 
     // Start is called before the first frame update
     void Start()
@@ -44,6 +53,11 @@ public class UI_Manipulation_Script : MonoBehaviour
     {
         TextContainer.SetActive(false);
         uiRotation.SetActive(true);
+
+        // TODO: one superclass
+        circularX.Reset();
+        circularY.Reset();
+        circularZ.Reset();
     }
 
     public void ButtonStretch_Click()
