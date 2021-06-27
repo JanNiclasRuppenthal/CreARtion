@@ -6,6 +6,7 @@ using Vuforia;
 using System.IO;
 using System;
 
+
 public class UI_Selection_Script : MonoBehaviour
 {
 
@@ -79,6 +80,7 @@ public class UI_Selection_Script : MonoBehaviour
 
     private void setStage()
     {
+       
         switch (enumObjects)
         {
             case Objects.Cube:

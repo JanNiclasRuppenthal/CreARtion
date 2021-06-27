@@ -11,6 +11,7 @@ public class SwitchMode : MonoBehaviour
 	public GameObject uiSelectionmode;
 	public GameObject uiManipulationmode;
 	public GameObject uiRotation;
+	public UI_Manipulation_Script ui_Manipulation_Script;
 
 	
 	private GameObject baseObject;
@@ -94,9 +95,18 @@ public class SwitchMode : MonoBehaviour
 			outline.OutlineMode = Outline.Mode.OutlineAll;
 			outline.OutlineColor = new Color(0, 0, 0, 0);
 			outline.OutlineWidth = 5f;
+
 		}
 
+
+		// if the user moved the objects around before
+		ui_Manipulation_Script.removeObjectsFromCamera();
+
+
 		listOfMarkedObjects.Clear();
+
+		// no current state of a manipualtion mode
+		ui_Manipulation_Script.currentState = UI_Manipulation_Script.manipulationStates.None;
 
 	}
 
@@ -110,6 +120,7 @@ public class SwitchMode : MonoBehaviour
 
 		// enable the manipulationmode
 		uiManipulationmode.SetActive(true);
+
 	}
 
 

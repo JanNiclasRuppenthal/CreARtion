@@ -14,7 +14,6 @@ public class CircularRangeControlX : CircularRange
         foreach (GameObject objects in listofObjects)
         {
             Vector3 v = objects.transform.rotation.eulerAngles;
-            Debug.Log(v.y);
             objects.transform.localEulerAngles = new Vector3(CurrentValue, cY.getCurrentValue(), cZ.getCurrentValue());
         }
     }
