@@ -18,7 +18,7 @@ public class DefaultObjectsParameters : MonoBehaviour
 
         this.GetComponent<Transform>().localScale = new Vector3(0.1f, 0.1f, 0.1f);
         this.GetComponent<Transform>().rotation = new Quaternion(0, 0, 0, 0);
-        this.GetComponent<Renderer>().material.SetColor("colorWhite", new Color(255.0f, 255.0f, 255.0f, 255.0f));
+        this.GetComponent<Renderer>().material.SetColor("_EmissionColor", new Color(255.0f, 255.0f, 255.0f));
 
 
     }

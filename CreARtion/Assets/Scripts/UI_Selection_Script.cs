@@ -43,9 +43,8 @@ public class UI_Selection_Script : MonoBehaviour
     public AnchorBehaviour[] stages = new AnchorBehaviour[6];
     public ContentPositioningBehaviour[] positioner = new ContentPositioningBehaviour[6];
 
-    // List of Buttons and Lists of different modes
-    // Selection mode
-    public GameObject scrollableListForms;
+    // List of Buttons
+    public Button[] formIcons = new Button[6];
 
 
     // enumeration of all modes
@@ -105,6 +104,45 @@ public class UI_Selection_Script : MonoBehaviour
             default: break;
         }
     }
+    
+    // Highlight selected Icon
+    public void highlightIcon()
+    {
+        resetIconHighlighting();
+        
+        ColorUtility.TryParseHtmlString("#B3F2E5", out Color myColor);
+        
+        switch (enumObjects)
+        {
+            case Objects.Cube:
+                formIcons[0].image.color = myColor;
+                break;
+            case Objects.Cylinder:
+                formIcons[1].image.color = myColor;
+                break;
+            case Objects.Sphere:
+                formIcons[2].image.color = myColor;
+                break;
+            case Objects.Capsule:
+                formIcons[3].image.color = myColor;
+                break;
+            case Objects.Pyramid:
+                formIcons[4].image.color = myColor;
+                break;
+            case Objects.Cone:
+                formIcons[5].image.color = myColor;
+                break;
+            default: break;
+        }
+    }
+
+    public void resetIconHighlighting()
+    {
+        foreach (Button i in formIcons)
+        {
+            i.image.color = Color.white;
+        }
+    }
 
 
     // Start is called before the first frame update
@@ -126,6 +164,10 @@ public class UI_Selection_Script : MonoBehaviour
         {
             PlayerPrefs.SetInt("numberOfShots", 0);
         }
+        
+        // Highlight Cube Icon
+        ColorUtility.TryParseHtmlString("#B3F2E5", out Color myColor);
+        formIcons[0].image.color = myColor;
     }
 
     // set one stage and positioner as active
@@ -302,6 +344,8 @@ public class UI_Selection_Script : MonoBehaviour
 
         enumObjects = Objects.Cube;
         changeInformationOnText();
+        
+        highlightIcon();
     }
 
     // In this method you enable cylinder stage and positioner and
@@ -312,6 +356,8 @@ public class UI_Selection_Script : MonoBehaviour
 
         enumObjects = Objects.Cylinder;
         changeInformationOnText();
+        
+        highlightIcon();
     }
 
     // In this method you enable sphere stage and positioner and
@@ -322,6 +368,8 @@ public class UI_Selection_Script : MonoBehaviour
 
         enumObjects = Objects.Sphere;
         changeInformationOnText();
+        
+        highlightIcon();
     }
 
     // In this method you enable capsule stage and positioner and
@@ -332,6 +380,8 @@ public class UI_Selection_Script : MonoBehaviour
 
         enumObjects = Objects.Capsule;
         changeInformationOnText();
+        
+        highlightIcon();
     }
 
     // In this method you enable pyramid stage and positioner and
@@ -342,6 +392,8 @@ public class UI_Selection_Script : MonoBehaviour
 
         enumObjects = Objects.Pyramid;
         changeInformationOnText();
+        
+        highlightIcon();
     }
 
     // In this method you enable cone stage and positioner and
@@ -352,6 +404,8 @@ public class UI_Selection_Script : MonoBehaviour
 
         enumObjects = Objects.Cone;
         changeInformationOnText();
+        
+        highlightIcon();
     }
 
     // this method change the text of information

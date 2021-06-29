@@ -92,16 +92,18 @@ public class SwitchMode : MonoBehaviour
         {
 			var outline = item.GetComponent<Outline>();
 
-			outline.OutlineMode = Outline.Mode.OutlineAll;
+			outline.OutlineMode = Outline.Mode.OutlineHidden;
 			outline.OutlineColor = new Color(0, 0, 0, 0);
-			outline.OutlineWidth = 5f;
+			outline.OutlineWidth = 0f;
 
 		}
 
 
 		// if the user moved the objects around before
 		ui_Manipulation_Script.removeObjectsFromCamera();
-
+		
+		// reset Icon Highlighting
+		ui_Manipulation_Script.resetIconHighlighting();
 
 		listOfMarkedObjects.Clear();
 
@@ -146,7 +148,9 @@ public class SwitchMode : MonoBehaviour
 
 		listIndex.Clear();
 
-
+		// reset Icon Highlighting
+		ui_Manipulation_Script.resetIconHighlighting();
+		
 		// switch to the selectionmode
 		switchToSelectionmode();
     }
