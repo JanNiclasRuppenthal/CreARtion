@@ -38,7 +38,7 @@ public class UI_Manipulation_Script : MonoBehaviour
 
     public enum manipulationStates
     {
-        None,
+        Select,
         Move,
         Resize,
         Rotate,
@@ -62,11 +62,14 @@ public class UI_Manipulation_Script : MonoBehaviour
     public Button[] mIcons = new Button[6];
     
 
-        // Start is called before the first frame update
+    // Start is called before the first frame update
     void Start()
     {
         listOfMarkedObjects = sw.getListOfMarkedObjects();
-        currentState = manipulationStates.None;
+        currentState = manipulationStates.Select;
+
+        TextContainer.SetActive(true);
+        helpfulInformations.text = "Tap on the objects to select them.";
     }
 
     // Update is called once per frame
@@ -131,6 +134,14 @@ public class UI_Manipulation_Script : MonoBehaviour
 
     // Buttons in the scrollable list
 
+    public void ButtonSelect_Click()
+    {
+        currentState = manipulationStates.Select;
+
+        TextContainer.SetActive(true);
+        helpfulInformations.text = "Tap on the objects to select them.";
+    }
+
     public void ButtonMove_Click()
     {
         // set current state of the UI
@@ -143,6 +154,9 @@ public class UI_Manipulation_Script : MonoBehaviour
         uiColor.SetActive(false);
 
         highlightIcon();
+
+        TextContainer.SetActive(true);
+        helpfulInformations.text = "Move your device to move your selected objects.";
     }
 
  
@@ -186,6 +200,9 @@ public class UI_Manipulation_Script : MonoBehaviour
         currentState = manipulationStates.Resize; 
         
         highlightIcon();
+
+        TextContainer.SetActive(true);
+        helpfulInformations.text = "Use the two finger gesture to resize the selected objects.";
     }
 
     private void resizeObjects()
@@ -255,6 +272,9 @@ public class UI_Manipulation_Script : MonoBehaviour
         currentState = manipulationStates.Stretch;
         
         highlightIcon();
+
+        TextContainer.SetActive(true);
+        helpfulInformations.text = "Use the two finger gesture along the x-, y- or z-axis to stretch the selected objects.";
     }
 
     public void stretchObjects()
@@ -264,6 +284,12 @@ public class UI_Manipulation_Script : MonoBehaviour
         float xAngle;
         float yAngle;
         float zAngle;
+        float zAngle2;
+        float xAngleOpossite;
+        float yAngleOpossite;
+        float zAngleOpossite;
+
+        TextContainer.SetActive(true);
 
         foreach (Touch touch in Input.touches)
         {
@@ -279,23 +305,32 @@ public class UI_Manipulation_Script : MonoBehaviour
                     if (touch.phase == TouchPhase.Began)
                     {
                         initialFingersDistance = Vector2.Distance(Input.touches[0].position, Input.touches[1].position);
-                        Vector2 direction = new Vector2(Input.touches[0].position.x, Input.touches[1].position.y);
+                        Vector2 direction = Input.touches[0].position - Input.touches[1].position;
                         
                         // Get Angle of direction to axis vectors
                         // x
-                        xAngle = Vector2.Angle(direction, new Vector2(0, 1));
+                        xAngle = Vector2.Angle(direction, new Vector2(1, 0));
                         // y
-                        yAngle = Vector2.Angle(direction, new Vector2(1, 0));
+                        yAngle = Vector2.Angle(direction, new Vector2(0, 1));
                         // z
                         zAngle = Vector2.Angle(direction, new Vector2(1, 1));
+                        zAngle2 = Vector2.Angle(direction, new Vector2(1, -1));
 
-                        float min = Mathf.Min(Mathf.Min(xAngle, yAngle), zAngle);
-                        
-                        if (min == xAngle)
+                        xAngleOpossite = Vector2.Angle(direction, new Vector2(-1, 0));
+                        // y
+                        yAngleOpossite = Vector2.Angle(direction, new Vector2(0, -1));
+                        // z
+                        zAngleOpossite = Vector2.Angle(direction, new Vector2(-1, -1));
+
+                        float min = Mathf.Min(Mathf.Min(Mathf.Min(xAngle, yAngle), zAngle), zAngle2);
+                        min = Mathf.Min(min, Mathf.Min(Mathf.Min(xAngleOpossite, yAngleOpossite), zAngleOpossite));
+
+
+                        if (min == xAngle || min == xAngleOpossite)
                         {
                             initialScaleDir = objects.transform.localScale.x;
                             currentDir = scaleDir.ScaleX;
-                        } else if (min == yAngle) {
+                        } else if (min == yAngle || min == yAngleOpossite) {
                             initialScaleDir = objects.transform.localScale.y;
                             currentDir = scaleDir.ScaleY;
                         } else {
@@ -352,8 +387,16 @@ public class UI_Manipulation_Script : MonoBehaviour
         currentState = manipulationStates.Color;
         
         highlightIcon();
+
+        TextContainer.SetActive(false);
     }
-    
+
+
+    /*
+     * Vielleicht können wir das nicht implementieren.
+     * Wenn wir die Funktion aufrufen, dann wird die [2, 4]*#Objekte aufgerufen.
+     * Das Problem hier ist, dass viele Objekte Zugriff auf dieses Skript haben.
+     */
     public void Copy_Click()
     {
         // if the user moved the objects around before
@@ -366,5 +409,45 @@ public class UI_Manipulation_Script : MonoBehaviour
         currentState = manipulationStates.Copy;
         
         highlightIcon();
+
+        ArrayList copyObjects = new ArrayList();
+        int counter = 0;
+
+        foreach (GameObject objects in listOfMarkedObjects)
+        {
+            if (counter == listOfMarkedObjects.Count)
+            {
+                continue;
+            }
+
+            GameObject copied = Instantiate(objects, camera.transform);
+
+            copied.transform.position = new Vector3(objects.transform.position.x, objects.transform.position.y, 0.5f);
+
+            copyObjects.Add(copied);
+
+            counter++;
+
+        }
+
+        // there is no outline after you enter the selectionmode
+        foreach (GameObject item in listOfMarkedObjects)
+        {
+            var outline = item.GetComponent<Outline>();
+
+            outline.OutlineMode = Outline.Mode.OutlineHidden;
+            outline.OutlineColor = new Color(0, 0, 0, 0);
+            outline.OutlineWidth = 0f;
+
+        }
+
+        listOfMarkedObjects.Clear();
+
+        foreach (GameObject copies in copyObjects)
+        {
+            listOfMarkedObjects.Add(copies);
+        }
+
+        ButtonMove_Click();
     }
 }

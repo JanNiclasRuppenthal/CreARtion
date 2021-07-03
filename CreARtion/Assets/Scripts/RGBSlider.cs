@@ -42,7 +42,7 @@ public class RGBSlider: MonoBehaviour
             
             outline.OutlineMode = Outline.Mode.OutlineAll;
             outline.OutlineColor = new Color(r, g, b, 1);
-            outline.OutlineWidth = 5f;
+            outline.OutlineWidth = 7f;
         }
     }
 }

@@ -23,9 +23,13 @@ public class SwitchMode : MonoBehaviour
 	void Update()
 	{
 
+		if (ui_Manipulation_Script.currentState != UI_Manipulation_Script.manipulationStates.Select)
+        {
+			// DO not detect a gameobject in the scene
+        }
 
 		// Touching Objects
-		if (Input.GetMouseButton(0))
+		else if (Input.GetMouseButton(0))
 		{
 			Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
@@ -66,7 +70,7 @@ public class SwitchMode : MonoBehaviour
 			// set the new outline
 			outline.OutlineMode = Outline.Mode.OutlineAll;
 			outline.OutlineColor = new Color(r, g, b, 1);
-			outline.OutlineWidth = 5f;
+			outline.OutlineWidth = 7f;
 
 			// save the object in ArrayList
 			listOfMarkedObjects.Add(baseObject);
@@ -108,7 +112,7 @@ public class SwitchMode : MonoBehaviour
 		listOfMarkedObjects.Clear();
 
 		// no current state of a manipualtion mode
-		ui_Manipulation_Script.currentState = UI_Manipulation_Script.manipulationStates.None;
+		ui_Manipulation_Script.currentState = UI_Manipulation_Script.manipulationStates.Select;
 
 	}
 
