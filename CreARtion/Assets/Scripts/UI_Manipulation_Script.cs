@@ -101,23 +101,26 @@ public class UI_Manipulation_Script : MonoBehaviour
         
         switch (currentState)
         {
-            case manipulationStates.Move:
+            case manipulationStates.Select:
                 mIcons[0].image.color = myColor;
                 break;
-            case manipulationStates.Resize:
+            case manipulationStates.Move:
                 mIcons[1].image.color = myColor;
                 break;
-            case manipulationStates.Rotate:
+            case manipulationStates.Resize:
                 mIcons[2].image.color = myColor;
                 break;
-            case manipulationStates.Stretch:
+            case manipulationStates.Rotate:
                 mIcons[3].image.color = myColor;
                 break;
-            case manipulationStates.Color:
+            case manipulationStates.Stretch:
                 mIcons[4].image.color = myColor;
                 break;
-            case manipulationStates.Copy:
+            case manipulationStates.Color:
                 mIcons[5].image.color = myColor;
+                break;
+            case manipulationStates.Copy:
+                mIcons[6].image.color = myColor;
                 break;
             default: break;
         }
@@ -138,6 +141,8 @@ public class UI_Manipulation_Script : MonoBehaviour
     {
         currentState = manipulationStates.Select;
 
+        highlightIcon();
+        
         TextContainer.SetActive(true);
         helpfulInformations.text = "Tap on the objects to select them.";
     }
@@ -393,7 +398,7 @@ public class UI_Manipulation_Script : MonoBehaviour
 
 
     /*
-     * Vielleicht können wir das nicht implementieren.
+     * Vielleicht kï¿½nnen wir das nicht implementieren.
      * Wenn wir die Funktion aufrufen, dann wird die [2, 4]*#Objekte aufgerufen.
      * Das Problem hier ist, dass viele Objekte Zugriff auf dieses Skript haben.
      */
