@@ -11,6 +11,7 @@ public class UI_Manipulation_Script : MonoBehaviour
     public GameObject TextContainer;
     public Text helpfulInformations;
     public GameObject scrollableListManipulations;
+    
 
 
     //Rotation-UI
@@ -60,7 +61,7 @@ public class UI_Manipulation_Script : MonoBehaviour
     
     // Icons
     public Button[] mIcons = new Button[6];
-    
+
 
     // Start is called before the first frame update
     void Start()
@@ -68,8 +69,12 @@ public class UI_Manipulation_Script : MonoBehaviour
         listOfMarkedObjects = sw.getListOfMarkedObjects();
         currentState = manipulationStates.Select;
 
+        // highlight icon after switching the mode
+        highlightIcon();
+
         TextContainer.SetActive(true);
         helpfulInformations.text = "Tap on the objects to select them.";
+
     }
 
     // Update is called once per frame
@@ -142,7 +147,13 @@ public class UI_Manipulation_Script : MonoBehaviour
         currentState = manipulationStates.Select;
 
         highlightIcon();
-        
+
+        // deactivate the rotation UI 
+        uiRotation.SetActive(false);
+
+        // deactivate the color UI 
+        uiColor.SetActive(false);
+
         TextContainer.SetActive(true);
         helpfulInformations.text = "Tap on the objects to select them.";
     }
@@ -263,6 +274,7 @@ public class UI_Manipulation_Script : MonoBehaviour
         circularZ.Reset();
     }
 
+
     public void ButtonStretch_Click()
     {
         // if the user moved the objects around before
@@ -280,8 +292,11 @@ public class UI_Manipulation_Script : MonoBehaviour
 
         TextContainer.SetActive(true);
         helpfulInformations.text = "Use the two finger gesture along the x-, y- or z-axis to stretch the selected objects.";
+
     }
 
+
+   
     public void stretchObjects()
     {
         int fingersOnScreen = 0;
@@ -305,12 +320,12 @@ public class UI_Manipulation_Script : MonoBehaviour
             {
                 foreach (GameObject objects in listOfMarkedObjects)
                 {
-
+                   
                     //First set the initial distance between fingers so you can compare.
                     if (touch.phase == TouchPhase.Began)
                     {
                         initialFingersDistance = Vector2.Distance(Input.touches[0].position, Input.touches[1].position);
-                        Vector2 direction = Input.touches[0].position - Input.touches[1].position;
+                        Vector2 direction = Input.touches[1].position - Input.touches[0].position;
                         
                         // Get Angle of direction to axis vectors
                         // x
@@ -325,7 +340,7 @@ public class UI_Manipulation_Script : MonoBehaviour
                         // y
                         yAngleOpossite = Vector2.Angle(direction, new Vector2(0, -1));
                         // z
-                        zAngleOpossite = Vector2.Angle(direction, new Vector2(-1, -1));
+                        zAngleOpossite = Vector2.Angle(direction, new Vector2(-1, 1));
 
                         float min = Mathf.Min(Mathf.Min(Mathf.Min(xAngle, yAngle), zAngle), zAngle2);
                         min = Mathf.Min(min, Mathf.Min(Mathf.Min(xAngleOpossite, yAngleOpossite), zAngleOpossite));
@@ -335,10 +350,12 @@ public class UI_Manipulation_Script : MonoBehaviour
                         {
                             initialScaleDir = objects.transform.localScale.x;
                             currentDir = scaleDir.ScaleX;
-                        } else if (min == yAngle || min == yAngleOpossite) {
+                        } else if (min == yAngle || min == yAngleOpossite) 
+                        {
                             initialScaleDir = objects.transform.localScale.y;
                             currentDir = scaleDir.ScaleY;
-                        } else {
+                        } else if (min == zAngle || min == zAngleOpossite) 
+                        {
                             initialScaleDir = objects.transform.localScale.z;
                             currentDir = scaleDir.ScaleZ;
                         }
@@ -370,8 +387,11 @@ public class UI_Manipulation_Script : MonoBehaviour
                                 y = objects.transform.localScale.y;
                                 break;
                         }
-                        
+
                         objects.transform.localScale = new Vector3(x,y,z);
+                        
+                        
+                       
                     }
                 }
             }
@@ -396,14 +416,10 @@ public class UI_Manipulation_Script : MonoBehaviour
         TextContainer.SetActive(false);
     }
 
-
-    /*
-     * Vielleicht k�nnen wir das nicht implementieren.
-     * Wenn wir die Funktion aufrufen, dann wird die [2, 4]*#Objekte aufgerufen.
-     * Das Problem hier ist, dass viele Objekte Zugriff auf dieses Skript haben.
-     */
+    
     public void Copy_Click()
     {
+
         // if the user moved the objects around before
         removeObjectsFromCamera();
 
@@ -416,22 +432,35 @@ public class UI_Manipulation_Script : MonoBehaviour
         highlightIcon();
 
         ArrayList copyObjects = new ArrayList();
-        int counter = 0;
 
         foreach (GameObject objects in listOfMarkedObjects)
         {
-            if (counter == listOfMarkedObjects.Count)
-            {
-                continue;
-            }
 
             GameObject copied = Instantiate(objects, camera.transform);
 
+            // copy position
             copied.transform.position = new Vector3(objects.transform.position.x, objects.transform.position.y, 0.5f);
 
-            copyObjects.Add(copied);
+            // copy rotation
+            Vector3 rotation = objects.transform.eulerAngles;
+            copied.transform.eulerAngles = rotation;
 
-            counter++;
+            Debug.Log(rotation);
+            Debug.Log(copied.transform.eulerAngles);
+
+            // copy scale
+            copied.transform.localScale = new Vector3(objects.transform.localScale.x, objects.transform.localScale.y, objects.transform.localScale.z);
+
+            // copy colour
+            float r = objects.GetComponent<MeshRenderer>().material.color.r;
+            float g = objects.GetComponent<MeshRenderer>().material.color.g;
+            float b = objects.GetComponent<MeshRenderer>().material.color.b;
+            float a = objects.GetComponent<MeshRenderer>().material.color.a;
+
+            copied.GetComponent<Renderer>().material.SetColor("_Color", new Color(r, g, b, a));
+
+
+            copyObjects.Add(copied);
 
         }
 
@@ -449,10 +478,11 @@ public class UI_Manipulation_Script : MonoBehaviour
         listOfMarkedObjects.Clear();
 
         foreach (GameObject copies in copyObjects)
-        {
+        {    
             listOfMarkedObjects.Add(copies);
         }
 
         ButtonMove_Click();
+
     }
 }

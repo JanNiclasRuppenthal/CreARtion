@@ -60,8 +60,6 @@ public class UI_Selection_Script : MonoBehaviour
 
     private Objects enumObjects;
 
-    public GameObject test;
-
 
     private void Update()
     {

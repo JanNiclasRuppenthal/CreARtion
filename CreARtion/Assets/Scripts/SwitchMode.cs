@@ -25,7 +25,7 @@ public class SwitchMode : MonoBehaviour
 
 		if (ui_Manipulation_Script.currentState != UI_Manipulation_Script.manipulationStates.Select)
         {
-			// DO not detect a gameobject in the scene
+			// do NOT detect a gameobject in the scene
         }
 
 		// Touching Objects
@@ -43,6 +43,12 @@ public class SwitchMode : MonoBehaviour
 	}
 
 
+	/*
+	 * This method is called several times because of the update() function.
+	 * It will be called every frame.
+	 * That is the reason why objects are copied several times. 
+	 * The ArrayList had several instances of the same object.
+	 */
 	private void markObjects(Ray ray)
     {
 
@@ -60,6 +66,15 @@ public class SwitchMode : MonoBehaviour
 
 			// save the object
 			baseObject = hit.collider.gameObject;
+
+			// if the object is already in the list, do not add it to the ArrayList
+			foreach (GameObject markedObjects in listOfMarkedObjects)
+            {
+				if (markedObjects == baseObject)
+                {
+					return;
+                }
+            }
 
 
 			// get the complementary colour as outline of this object
@@ -126,6 +141,8 @@ public class SwitchMode : MonoBehaviour
 
 		// enable the manipulationmode
 		uiManipulationmode.SetActive(true);
+
+		ui_Manipulation_Script.highlightIcon();
 
 	}
 
