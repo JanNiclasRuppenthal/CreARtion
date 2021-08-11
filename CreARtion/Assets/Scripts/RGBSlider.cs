@@ -17,7 +17,7 @@ public class RGBSlider: MonoBehaviour
 
     // arraylist of marked objects
     public SwitchMode sw;
-    private ArrayList listOfMarkedObjects;
+    private HashSet<GameObject> listOfMarkedObjects;
 
     private void Start()
     {

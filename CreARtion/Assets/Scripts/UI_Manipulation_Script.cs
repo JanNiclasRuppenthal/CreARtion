@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Vuforia;
@@ -12,7 +13,6 @@ public class UI_Manipulation_Script : MonoBehaviour
     public Text helpfulInformations;
     public GameObject scrollableListManipulations;
     
-
 
     //Rotation-UI
     public GameObject uiRotation;
@@ -28,11 +28,25 @@ public class UI_Manipulation_Script : MonoBehaviour
 
     // arraylist of marked objects
     public SwitchMode sw;
-    private ArrayList listOfMarkedObjects;
+    private HashSet<GameObject> listOfMarkedObjects;
 
     float initialFingersDistance;
     Vector3 initialScale;
     private float initialScaleDir;
+
+    // boolean variables control pad
+    private bool up_y = false;
+    private bool down_y = false;
+    private bool right_x = false;
+    private bool left_x = false;
+    private bool up_z = false;
+    private bool down_z = false;
+
+    // control pad
+    public GameObject controlPad;
+
+    // speed
+    public float speed = 0.01f;
 
     // camera
     public Camera camera;
@@ -93,6 +107,55 @@ public class UI_Manipulation_Script : MonoBehaviour
                 break;
             default: break;
         }
+
+        if (up_y)
+        {
+            foreach (GameObject objects in listOfMarkedObjects)
+            {
+                Vector3 pos = objects.transform.position;
+                objects.transform.parent.position = new Vector3(pos.x, pos.y + speed, pos.z);
+            }
+        }
+        else if(down_y)
+        {
+            foreach (GameObject objects in listOfMarkedObjects)
+            {
+                Vector3 pos = objects.transform.position;
+                objects.transform.parent.position = new Vector3(pos.x, pos.y - speed, pos.z);
+            }
+        }
+        else if (right_x)
+        {
+            foreach (GameObject objects in listOfMarkedObjects)
+            {
+                Vector3 pos = objects.transform.position;
+                objects.transform.parent.position = new Vector3(pos.x + speed, pos.y, pos.z);
+            }
+        }
+        else if (left_x)
+        {
+            foreach (GameObject objects in listOfMarkedObjects)
+            {
+                Vector3 pos = objects.transform.position;
+                objects.transform.parent.position = new Vector3(pos.x - speed, pos.y, pos.z);
+            }
+        }
+        else if (up_z)
+        {
+            foreach (GameObject objects in listOfMarkedObjects)
+            {
+                Vector3 pos = objects.transform.position;
+                objects.transform.parent.position = new Vector3(pos.x, pos.y, pos.z + speed);
+            }
+        }
+        else if (down_z)
+        {
+            foreach (GameObject objects in listOfMarkedObjects)
+            {
+                Vector3 pos = objects.transform.position;
+                objects.transform.parent.position = new Vector3(pos.x, pos.y, pos.z - speed);
+            }
+        }
     }
 
     
@@ -144,12 +207,19 @@ public class UI_Manipulation_Script : MonoBehaviour
 
     public void ButtonSelect_Click()
     {
+        // if the user moved the objects around before
+        removeObjectsFromCamera();
+
         currentState = manipulationStates.Select;
 
         highlightIcon();
 
+
         // deactivate the rotation UI 
         uiRotation.SetActive(false);
+
+        controlPad.SetActive(false);
+        setControlPadBoolsOnFalse();
 
         // deactivate the color UI 
         uiColor.SetActive(false);
@@ -165,7 +235,10 @@ public class UI_Manipulation_Script : MonoBehaviour
 
         // deactivate the rotation UI 
         uiRotation.SetActive(false);
-        
+
+        controlPad.SetActive(false);
+        setControlPadBoolsOnFalse();
+
         // deactivate the color UI 
         uiColor.SetActive(false);
 
@@ -183,7 +256,7 @@ public class UI_Manipulation_Script : MonoBehaviour
         foreach (GameObject objects in listOfMarkedObjects)
         {
             // put the object as a child to camera
-            objects.transform.parent = camera.transform;
+            objects.transform.parent.parent.parent = camera.transform;
         }
     }
 
@@ -196,7 +269,7 @@ public class UI_Manipulation_Script : MonoBehaviour
 
         foreach (GameObject objects in listOfMarkedObjects)
         {
-            objects.transform.parent = null;
+            objects.transform.parent.parent.parent = null;
         }
     }
 
@@ -209,7 +282,10 @@ public class UI_Manipulation_Script : MonoBehaviour
 
         // deactivate the rotation UI 
         uiRotation.SetActive(false);
-        
+
+        controlPad.SetActive(false);
+        setControlPadBoolsOnFalse();
+
         // deactivate the color UI 
         uiColor.SetActive(false);
 
@@ -261,6 +337,9 @@ public class UI_Manipulation_Script : MonoBehaviour
         // deactivate the color UI 
         uiColor.SetActive(false);
 
+        controlPad.SetActive(false);
+        setControlPadBoolsOnFalse();
+
         currentState = manipulationStates.Rotate;
         
         highlightIcon();
@@ -282,7 +361,10 @@ public class UI_Manipulation_Script : MonoBehaviour
 
         // deactivate the rotation UI 
         uiRotation.SetActive(false);
-        
+
+        controlPad.SetActive(false);
+        setControlPadBoolsOnFalse();
+
         // deactivate the color UI 
         uiColor.SetActive(false);
 
@@ -348,15 +430,15 @@ public class UI_Manipulation_Script : MonoBehaviour
 
                         if (min == xAngle || min == xAngleOpossite)
                         {
-                            initialScaleDir = objects.transform.localScale.x;
+                            initialScaleDir = objects.transform.parent.localScale.x;
                             currentDir = scaleDir.ScaleX;
                         } else if (min == yAngle || min == yAngleOpossite) 
                         {
-                            initialScaleDir = objects.transform.localScale.y;
+                            initialScaleDir = objects.transform.parent.localScale.y;
                             currentDir = scaleDir.ScaleY;
                         } else if (min == zAngle || min == zAngleOpossite) 
                         {
-                            initialScaleDir = objects.transform.localScale.z;
+                            initialScaleDir = objects.transform.parent.localScale.z;
                             currentDir = scaleDir.ScaleZ;
                         }
                     }
@@ -369,29 +451,30 @@ public class UI_Manipulation_Script : MonoBehaviour
                         float y = 0;
                         float z = 0;
 
+                        
                         switch (currentDir)
                         {
                             case scaleDir.ScaleX:
                                 x = initialScaleDir * stretchFactor;
-                                y = objects.transform.localScale.y;
-                                z = objects.transform.localScale.z;
+                                y = objects.transform.parent.localScale.y;
+                                z = objects.transform.parent.localScale.z;
                                 break;
                             case scaleDir.ScaleY:
                                 y = initialScaleDir * stretchFactor;
-                                x = objects.transform.localScale.x;
-                                z = objects.transform.localScale.z;
+                                x = objects.transform.parent.localScale.x;
+                                z = objects.transform.parent.localScale.z;
                                 break;
                             case scaleDir.ScaleZ:
                                 z = initialScaleDir * stretchFactor;
-                                x = objects.transform.localScale.x;
-                                y = objects.transform.localScale.y;
+                                x = objects.transform.parent.localScale.x;
+                                y = objects.transform.parent.localScale.y;
                                 break;
                         }
 
-                        objects.transform.localScale = new Vector3(x,y,z);
-                        
-                        
-                       
+                        objects.transform.parent.localScale = new Vector3(x, y, z);
+
+
+
                     }
                 }
             }
@@ -405,7 +488,9 @@ public class UI_Manipulation_Script : MonoBehaviour
 
         // deactivate the rotation UI 
         uiRotation.SetActive(false);
-        
+        controlPad.SetActive(false);
+        setControlPadBoolsOnFalse();
+
         // activate color UI
         uiColor.SetActive(true);
 
@@ -426,6 +511,8 @@ public class UI_Manipulation_Script : MonoBehaviour
         // deactivate the rotation UI and Color UI
         uiRotation.SetActive(false);
         uiColor.SetActive(false);
+        controlPad.SetActive(false);
+        setControlPadBoolsOnFalse();
 
         currentState = manipulationStates.Copy;
         
@@ -436,20 +523,20 @@ public class UI_Manipulation_Script : MonoBehaviour
         foreach (GameObject objects in listOfMarkedObjects)
         {
 
-            GameObject copied = Instantiate(objects, camera.transform);
+            GameObject copied = Instantiate(objects.transform.parent.parent.gameObject, camera.transform);
+
+            copied.transform.GetChild(0).GetChild(0).gameObject.GetComponent<MeshRenderer>().enabled = true;
 
             // copy position
-            copied.transform.position = new Vector3(objects.transform.position.x, objects.transform.position.y, 0.5f);
+            copied.transform.GetChild(0).GetChild(0).position = new Vector3(objects.transform.position.x, objects.transform.position.y, objects.transform.position.z);
 
             // copy rotation
             Vector3 rotation = objects.transform.eulerAngles;
-            copied.transform.eulerAngles = rotation;
+            copied.transform.GetChild(0).GetChild(0).transform.eulerAngles = rotation;
 
-            Debug.Log(rotation);
-            Debug.Log(copied.transform.eulerAngles);
 
             // copy scale
-            copied.transform.localScale = new Vector3(objects.transform.localScale.x, objects.transform.localScale.y, objects.transform.localScale.z);
+            copied.transform.GetChild(0).transform.localScale = new Vector3(objects.transform.parent.localScale.x, objects.transform.parent.localScale.y, objects.transform.parent.localScale.z);
 
             // copy colour
             float r = objects.GetComponent<MeshRenderer>().material.color.r;
@@ -457,10 +544,13 @@ public class UI_Manipulation_Script : MonoBehaviour
             float b = objects.GetComponent<MeshRenderer>().material.color.b;
             float a = objects.GetComponent<MeshRenderer>().material.color.a;
 
-            copied.GetComponent<Renderer>().material.SetColor("_Color", new Color(r, g, b, a));
+            copied.transform.GetChild(0).GetChild(0).GetComponent<Renderer>().material.SetColor("_Color", new Color(r, g, b, a));
+
+            
+            Debug.Log(copied.transform.GetChild(0).GetChild(0).gameObject.GetComponent<MeshRenderer>().enabled);
 
 
-            copyObjects.Add(copied);
+            copyObjects.Add(copied.transform.GetChild(0).GetChild(0).gameObject);
 
         }
 
@@ -484,5 +574,60 @@ public class UI_Manipulation_Script : MonoBehaviour
 
         ButtonMove_Click();
 
+    }
+
+    public void setControlPadBoolsOnFalse()
+    {
+        up_y = false;
+        down_y = false;
+        right_x = false;
+        left_x = false;
+        up_z = false;
+        down_z = false;
+    }
+
+
+    public void Buttontest_Click()
+    {
+        // if the user moved the objects around before
+        removeObjectsFromCamera();
+
+        // deactivate the rotation UI and Color UI
+        uiRotation.SetActive(false);
+        uiColor.SetActive(false);
+        controlPad.SetActive(false);
+
+        controlPad.SetActive(true);
+    }
+
+    public void ButtonUP_Click(bool up)
+    {
+        up_y = up;
+        
+    }
+
+    public void ButtonDOWN_Click(bool down)
+    {
+        down_y = down;
+    }
+
+    public void ButtonRIGHT_Click(bool right)
+    {
+        right_x = right;
+    }
+
+    public void ButtonLEFT_Click(bool left)
+    {
+        left_x = left;
+    }
+
+    public void ButtonUPZ_Click(bool up)
+    {
+        up_z = up;
+    }
+
+    public void ButtonDOWNZ_Click(bool down)
+    {
+        down_z = down;
     }
 }

@@ -13,7 +13,7 @@ public class CircularRangeControlY : CircularRange
         foreach (GameObject objects in listofObjects)
         {
             Vector3 v = objects.transform.localRotation.eulerAngles;
-            objects.transform.localEulerAngles = new Vector3(cX.getCurrentValue(), CurrentValue, cZ.getCurrentValue());
+            objects.transform.eulerAngles = new Vector3(cX.getCurrentValue(), CurrentValue, cZ.getCurrentValue());
         }
     }
 }

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using Vuforia;
 
 public class SwitchMode : MonoBehaviour
@@ -11,13 +12,18 @@ public class SwitchMode : MonoBehaviour
 	public GameObject uiSelectionmode;
 	public GameObject uiManipulationmode;
 	public GameObject uiRotation;
+	public GameObject uiControlPad;
 	public UI_Manipulation_Script ui_Manipulation_Script;
 
 	
 	private GameObject baseObject;
 
-	private ArrayList listOfMarkedObjects = new ArrayList();
+	private HashSet<GameObject> listOfMarkedObjects = new HashSet<GameObject>();
 
+	//private float cooldown = 0.15f;
+
+	//[SerializeField]
+	//private float timeDelay = 0.1f;
 
 	// Update is called once per frame
 	void Update()
@@ -28,16 +34,36 @@ public class SwitchMode : MonoBehaviour
 			// do NOT detect a gameobject in the scene
         }
 
+
 		// Touching Objects
-		else if (Input.GetMouseButton(0))
+		else if (Input.GetMouseButton(0) /*&& Time.time > cooldown*/)
 		{
 			Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
+			// behind the list
+			// Check if the mouse was clicked over a UI element
+			if (EventSystem.current.IsPointerOverGameObject())
+			{
+				return;
+			}
+
+			//cooldown = Time.time + timeDelay;
+
 			markObjects(ray);
 		}
-		else if (Input.touchCount > 0 && Input.touches[0].phase == TouchPhase.Began)
-        {
+		else if (Input.touchCount > 0 && Input.touches[0].phase == TouchPhase.Began /*&& Time.time > cooldown*/)
+		{
 			Ray ray = Camera.main.ScreenPointToRay(Input.GetTouch(0).position);
+
+			// behind the list
+			// Check if the mouse was clicked over a UI element
+			if (EventSystem.current.IsPointerOverGameObject())
+			{
+				return;
+			}
+
+			//cooldown = Time.time + timeDelay;
+
 			markObjects(ray);
 		}
 	}
@@ -72,6 +98,15 @@ public class SwitchMode : MonoBehaviour
             {
 				if (markedObjects == baseObject)
                 {
+					//listOfMarkedObjects.Remove(baseObject);
+					//Debug.Log(listOfMarkedObjects.Count+1);
+
+					//var outlineBaseObject = baseObject.GetComponent<Outline>();
+
+					//outlineBaseObject.OutlineMode = Outline.Mode.OutlineHidden;
+					//outlineBaseObject.OutlineColor = new Color(0, 0, 0, 0);
+					//outlineBaseObject.OutlineWidth = 0f;
+
 					return;
                 }
             }
@@ -87,7 +122,7 @@ public class SwitchMode : MonoBehaviour
 			outline.OutlineColor = new Color(r, g, b, 1);
 			outline.OutlineWidth = 7f;
 
-			// save the object in ArrayList
+			// save the object in HashSet
 			listOfMarkedObjects.Add(baseObject);
 
 		}
@@ -138,6 +173,8 @@ public class SwitchMode : MonoBehaviour
 		// deactivate stages and positioner and the ui of the selectionmode
 		listStagesPositioners.SetActive(false);
 		uiSelectionmode.SetActive(false);
+		uiControlPad.SetActive(false);
+		ui_Manipulation_Script.setControlPadBoolsOnFalse();
 
 		// enable the manipulationmode
 		uiManipulationmode.SetActive(true);
@@ -155,7 +192,7 @@ public class SwitchMode : MonoBehaviour
 		ArrayList listIndex = new ArrayList();
 		foreach (GameObject item in listOfMarkedObjects)
 		{
-			GameObject temp = item;
+			GameObject temp = item.transform.parent.parent.gameObject;
 			Destroy(temp);
 
 			listIndex.Add(item);
@@ -177,7 +214,7 @@ public class SwitchMode : MonoBehaviour
     }
 
 	// Getter
-	public ArrayList getListOfMarkedObjects(){
+	public HashSet<GameObject> getListOfMarkedObjects(){
 		return listOfMarkedObjects;
 	}
 }

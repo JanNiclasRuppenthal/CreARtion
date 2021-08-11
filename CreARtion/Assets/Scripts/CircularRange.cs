@@ -11,7 +11,7 @@ public abstract class CircularRange : MonoBehaviour
     public Text DetectedValue; //value textual feedback
 
     public SwitchMode sw;
-    protected ArrayList listofObjects;
+    protected HashSet<GameObject> listofObjects;
 
     public int Scale = 360; //value scale to use
 

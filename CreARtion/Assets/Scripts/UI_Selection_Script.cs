@@ -14,6 +14,8 @@ public class UI_Selection_Script : MonoBehaviour
     public GameObject uiSelectionmode;
     public GameObject uiManipulationmode;
 
+    public GameObject listStagesPositioners;
+
     // variables for screenshots
     private int number;
     private int screenshotTimer = 0;
@@ -189,7 +191,6 @@ public class UI_Selection_Script : MonoBehaviour
     public void ButtonScreenshot_Click()
     {
         // center the position of the text
-        //helpfulInformations.transform.position = new Vector2(672f, 31.0f);
 
         // new text
         helpfulInformations.text = "Screenshot taken in " + (3 - screenshotTimer);
@@ -229,11 +230,15 @@ public class UI_Selection_Script : MonoBehaviour
             // capture a screenshot
             // enable the uiSelectionmode
             uiSelectionmode.SetActive(false);
+            listStagesPositioners.SetActive(false);
+
+
             ScreenCapture.CaptureScreenshot(final_ScreenshotText);
             Invoke("enableSelectionmode", 0.1f);
 
             // new text
             helpfulInformations.text = "Screenshot was taken.";
+
 
             // reset variable
             screenshotTimer = 0;
@@ -247,6 +252,8 @@ public class UI_Selection_Script : MonoBehaviour
     private void enableSelectionmode()
     {
         uiSelectionmode.SetActive(true);
+        // enable stages and positioners
+        listStagesPositioners.SetActive(true);
     }
 
 
