@@ -44,6 +44,11 @@ public class UI_Manipulation_Script : MonoBehaviour
 
     // control pad
     public GameObject controlPad;
+    public GameObject switchMoveControl;
+    private bool controlPadIsActive = false;
+    public Button buttonSwitchMoveControl;
+    public Sprite controlPad_sprite;
+    public Sprite phone_sprite;
 
     // speed
     public float speed = 0.01f;
@@ -96,8 +101,11 @@ public class UI_Manipulation_Script : MonoBehaviour
     {
         switch (currentState)
         {
-            case manipulationStates.Move: 
-                moveObjects(); 
+            case manipulationStates.Move:
+                if (!controlPadIsActive)
+                {
+                    moveObjects(); 
+                }
                 break;
             case manipulationStates.Resize:
                 resizeObjects();
@@ -219,6 +227,8 @@ public class UI_Manipulation_Script : MonoBehaviour
         uiRotation.SetActive(false);
 
         controlPad.SetActive(false);
+        controlPadIsActive = false;
+        switchMoveControl.SetActive(false);
         setControlPadBoolsOnFalse();
 
         // deactivate the color UI 
@@ -237,6 +247,9 @@ public class UI_Manipulation_Script : MonoBehaviour
         uiRotation.SetActive(false);
 
         controlPad.SetActive(false);
+        controlPadIsActive = false;
+        buttonSwitchMoveControl.image.overrideSprite = controlPad_sprite;
+        switchMoveControl.SetActive(true);
         setControlPadBoolsOnFalse();
 
         // deactivate the color UI 
@@ -258,6 +271,26 @@ public class UI_Manipulation_Script : MonoBehaviour
             // put the object as a child to camera
             objects.transform.parent.parent.parent = camera.transform;
         }
+    }
+
+    public void changeMoveControl()
+    {
+        if (controlPadIsActive)
+        {
+            // Disable controlPad
+            controlPad.SetActive(false);
+            TextContainer.SetActive(true);
+            buttonSwitchMoveControl.image.overrideSprite = controlPad_sprite;
+        }
+        else
+        {
+            // Enable controlPad
+            controlPad.SetActive(true);
+            TextContainer.SetActive(false);
+            buttonSwitchMoveControl.image.overrideSprite = phone_sprite;
+        }
+        
+        controlPadIsActive = !controlPadIsActive;
     }
 
     public void removeObjectsFromCamera()
@@ -284,6 +317,8 @@ public class UI_Manipulation_Script : MonoBehaviour
         uiRotation.SetActive(false);
 
         controlPad.SetActive(false);
+        controlPadIsActive = false;
+        switchMoveControl.SetActive(false);
         setControlPadBoolsOnFalse();
 
         // deactivate the color UI 
@@ -338,6 +373,8 @@ public class UI_Manipulation_Script : MonoBehaviour
         uiColor.SetActive(false);
 
         controlPad.SetActive(false);
+        controlPadIsActive = false;
+        switchMoveControl.SetActive(false);
         setControlPadBoolsOnFalse();
 
         currentState = manipulationStates.Rotate;
@@ -363,6 +400,8 @@ public class UI_Manipulation_Script : MonoBehaviour
         uiRotation.SetActive(false);
 
         controlPad.SetActive(false);
+        controlPadIsActive = false;
+        switchMoveControl.SetActive(false);
         setControlPadBoolsOnFalse();
 
         // deactivate the color UI 
@@ -489,6 +528,8 @@ public class UI_Manipulation_Script : MonoBehaviour
         // deactivate the rotation UI 
         uiRotation.SetActive(false);
         controlPad.SetActive(false);
+        controlPadIsActive = false;
+        switchMoveControl.SetActive(false);
         setControlPadBoolsOnFalse();
 
         // activate color UI
@@ -512,6 +553,8 @@ public class UI_Manipulation_Script : MonoBehaviour
         uiRotation.SetActive(false);
         uiColor.SetActive(false);
         controlPad.SetActive(false);
+        controlPadIsActive = false;
+        switchMoveControl.SetActive(false);
         setControlPadBoolsOnFalse();
 
         currentState = manipulationStates.Copy;
@@ -587,6 +630,7 @@ public class UI_Manipulation_Script : MonoBehaviour
     }
 
 
+    // TODO: Can be deleted, since we merged the moving controls
     public void Buttontest_Click()
     {
         // if the user moved the objects around before
@@ -595,9 +639,9 @@ public class UI_Manipulation_Script : MonoBehaviour
         // deactivate the rotation UI and Color UI
         uiRotation.SetActive(false);
         uiColor.SetActive(false);
-        controlPad.SetActive(false);
 
         controlPad.SetActive(true);
+        switchMoveControl.SetActive(true);
     }
 
     public void ButtonUP_Click(bool up)

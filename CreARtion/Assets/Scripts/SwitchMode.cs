@@ -13,6 +13,7 @@ public class SwitchMode : MonoBehaviour
 	public GameObject uiManipulationmode;
 	public GameObject uiRotation;
 	public GameObject uiControlPad;
+	public GameObject switchMoveControl;
 	public UI_Manipulation_Script ui_Manipulation_Script;
 
 	
@@ -139,6 +140,8 @@ public class SwitchMode : MonoBehaviour
 		// disable the manipulationmode and the UIs of the manipulationstools
 		uiManipulationmode.SetActive(false);
 		uiRotation.SetActive(false);
+		uiControlPad.SetActive(false);
+		switchMoveControl.SetActive(false);
 
 
 		// there is no outline after you enter the selectionmode

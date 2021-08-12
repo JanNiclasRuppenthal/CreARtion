@@ -23,7 +23,7 @@ public class UI_Selection_Script : MonoBehaviour
     private int videocapturingTimerMinutes = 0;
 
 
-    // Video Button
+    // Video Button  
     public Button buttonVideocapture;
     public Sprite stop_sprite;
     public Sprite record_sprite;
