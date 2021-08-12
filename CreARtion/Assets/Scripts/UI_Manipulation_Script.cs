@@ -12,6 +12,8 @@ public class UI_Manipulation_Script : MonoBehaviour
     public GameObject TextContainer;
     public Text helpfulInformations;
     public GameObject scrollableListManipulations;
+
+    public GameObject[] clonedStages = new GameObject[6];
     
 
     //Rotation-UI
@@ -30,6 +32,9 @@ public class UI_Manipulation_Script : MonoBehaviour
     public SwitchMode sw;
     private HashSet<GameObject> listOfMarkedObjects;
 
+    // hashtable with the parents of the objects and their stages.
+    private Dictionary<GameObject, Transform> objectsStages;
+
     float initialFingersDistance;
     Vector3 initialScale;
     private float initialScaleDir;
@@ -45,7 +50,7 @@ public class UI_Manipulation_Script : MonoBehaviour
     // control pad
     public GameObject controlPad;
     public GameObject switchMoveControl;
-    private bool controlPadIsActive = false;
+    private bool controlPadIsNotActive = false;
     public Button buttonSwitchMoveControl;
     public Sprite controlPad_sprite;
     public Sprite phone_sprite;
@@ -85,7 +90,13 @@ public class UI_Manipulation_Script : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        // get the ArrayList
         listOfMarkedObjects = sw.getListOfMarkedObjects();
+
+        // get the Hashtable
+        objectsStages = sw.getDictionaryObjectStage();
+
+        // Initial state
         currentState = manipulationStates.Select;
 
         // highlight icon after switching the mode
@@ -102,7 +113,7 @@ public class UI_Manipulation_Script : MonoBehaviour
         switch (currentState)
         {
             case manipulationStates.Move:
-                if (!controlPadIsActive)
+                if (!controlPadIsNotActive)
                 {
                     moveObjects(); 
                 }
@@ -121,7 +132,7 @@ public class UI_Manipulation_Script : MonoBehaviour
             foreach (GameObject objects in listOfMarkedObjects)
             {
                 Vector3 pos = objects.transform.position;
-                objects.transform.parent.position = new Vector3(pos.x, pos.y + speed, pos.z);
+                objects.transform.position = new Vector3(pos.x, pos.y + speed, pos.z);
             }
         }
         else if(down_y)
@@ -129,7 +140,7 @@ public class UI_Manipulation_Script : MonoBehaviour
             foreach (GameObject objects in listOfMarkedObjects)
             {
                 Vector3 pos = objects.transform.position;
-                objects.transform.parent.position = new Vector3(pos.x, pos.y - speed, pos.z);
+                objects.transform.position = new Vector3(pos.x, pos.y - speed, pos.z);
             }
         }
         else if (right_x)
@@ -137,7 +148,7 @@ public class UI_Manipulation_Script : MonoBehaviour
             foreach (GameObject objects in listOfMarkedObjects)
             {
                 Vector3 pos = objects.transform.position;
-                objects.transform.parent.position = new Vector3(pos.x + speed, pos.y, pos.z);
+                objects.transform.position = new Vector3(pos.x + speed, pos.y, pos.z);
             }
         }
         else if (left_x)
@@ -145,7 +156,7 @@ public class UI_Manipulation_Script : MonoBehaviour
             foreach (GameObject objects in listOfMarkedObjects)
             {
                 Vector3 pos = objects.transform.position;
-                objects.transform.parent.position = new Vector3(pos.x - speed, pos.y, pos.z);
+                objects.transform.position = new Vector3(pos.x - speed, pos.y, pos.z);
             }
         }
         else if (up_z)
@@ -153,7 +164,7 @@ public class UI_Manipulation_Script : MonoBehaviour
             foreach (GameObject objects in listOfMarkedObjects)
             {
                 Vector3 pos = objects.transform.position;
-                objects.transform.parent.position = new Vector3(pos.x, pos.y, pos.z + speed);
+                objects.transform.position = new Vector3(pos.x, pos.y, pos.z + speed);
             }
         }
         else if (down_z)
@@ -161,7 +172,7 @@ public class UI_Manipulation_Script : MonoBehaviour
             foreach (GameObject objects in listOfMarkedObjects)
             {
                 Vector3 pos = objects.transform.position;
-                objects.transform.parent.position = new Vector3(pos.x, pos.y, pos.z - speed);
+                objects.transform.position = new Vector3(pos.x, pos.y, pos.z - speed);
             }
         }
     }
@@ -227,7 +238,7 @@ public class UI_Manipulation_Script : MonoBehaviour
         uiRotation.SetActive(false);
 
         controlPad.SetActive(false);
-        controlPadIsActive = false;
+        controlPadIsNotActive = false;
         switchMoveControl.SetActive(false);
         setControlPadBoolsOnFalse();
 
@@ -247,7 +258,7 @@ public class UI_Manipulation_Script : MonoBehaviour
         uiRotation.SetActive(false);
 
         controlPad.SetActive(false);
-        controlPadIsActive = false;
+        controlPadIsNotActive = false;
         buttonSwitchMoveControl.image.overrideSprite = controlPad_sprite;
         switchMoveControl.SetActive(true);
         setControlPadBoolsOnFalse();
@@ -269,13 +280,13 @@ public class UI_Manipulation_Script : MonoBehaviour
         foreach (GameObject objects in listOfMarkedObjects)
         {
             // put the object as a child to camera
-            objects.transform.parent.parent.parent = camera.transform;
+            objects.transform.parent = camera.transform;
         }
     }
 
     public void changeMoveControl()
     {
-        if (controlPadIsActive)
+        if (controlPadIsNotActive)
         {
             // Disable controlPad
             controlPad.SetActive(false);
@@ -287,10 +298,14 @@ public class UI_Manipulation_Script : MonoBehaviour
             // Enable controlPad
             controlPad.SetActive(true);
             TextContainer.SetActive(false);
+
+            // remove Objects from the camera
+            removeObjectsFromCamera();
+
             buttonSwitchMoveControl.image.overrideSprite = phone_sprite;
         }
         
-        controlPadIsActive = !controlPadIsActive;
+        controlPadIsNotActive = !controlPadIsNotActive;
     }
 
     public void removeObjectsFromCamera()
@@ -302,7 +317,8 @@ public class UI_Manipulation_Script : MonoBehaviour
 
         foreach (GameObject objects in listOfMarkedObjects)
         {
-            objects.transform.parent.parent.parent = null;
+            //objects.transform.parent = null;
+            objects.transform.parent = objectsStages[objects].GetChild(0);
         }
     }
 
@@ -317,7 +333,7 @@ public class UI_Manipulation_Script : MonoBehaviour
         uiRotation.SetActive(false);
 
         controlPad.SetActive(false);
-        controlPadIsActive = false;
+        controlPadIsNotActive = false;
         switchMoveControl.SetActive(false);
         setControlPadBoolsOnFalse();
 
@@ -351,13 +367,13 @@ public class UI_Manipulation_Script : MonoBehaviour
                     if (touch.phase == TouchPhase.Began)
                     {
                         initialFingersDistance = Vector2.Distance(Input.touches[0].position, Input.touches[1].position);
-                        initialScale = objects.transform.localScale;
+                        initialScale = objects.transform.parent.localScale;
                     }
                     else
                     {
                         var currentFingersDistance = Vector2.Distance(Input.touches[0].position, Input.touches[1].position);
                         var scaleFactor = currentFingersDistance / initialFingersDistance;
-                        objects.transform.localScale = initialScale * scaleFactor;
+                        objects.transform.parent.localScale = initialScale * scaleFactor;
                     }
                 }
             }
@@ -373,7 +389,7 @@ public class UI_Manipulation_Script : MonoBehaviour
         uiColor.SetActive(false);
 
         controlPad.SetActive(false);
-        controlPadIsActive = false;
+        controlPadIsNotActive = false;
         switchMoveControl.SetActive(false);
         setControlPadBoolsOnFalse();
 
@@ -400,7 +416,7 @@ public class UI_Manipulation_Script : MonoBehaviour
         uiRotation.SetActive(false);
 
         controlPad.SetActive(false);
-        controlPadIsActive = false;
+        controlPadIsNotActive = false;
         switchMoveControl.SetActive(false);
         setControlPadBoolsOnFalse();
 
@@ -511,9 +527,6 @@ public class UI_Manipulation_Script : MonoBehaviour
                         }
 
                         objects.transform.parent.localScale = new Vector3(x, y, z);
-
-
-
                     }
                 }
             }
@@ -528,7 +541,7 @@ public class UI_Manipulation_Script : MonoBehaviour
         // deactivate the rotation UI 
         uiRotation.SetActive(false);
         controlPad.SetActive(false);
-        controlPadIsActive = false;
+        controlPadIsNotActive = false;
         switchMoveControl.SetActive(false);
         setControlPadBoolsOnFalse();
 
@@ -553,25 +566,48 @@ public class UI_Manipulation_Script : MonoBehaviour
         uiRotation.SetActive(false);
         uiColor.SetActive(false);
         controlPad.SetActive(false);
-        controlPadIsActive = false;
+        controlPadIsNotActive = false;
         switchMoveControl.SetActive(false);
         setControlPadBoolsOnFalse();
 
-        currentState = manipulationStates.Copy;
         
+        currentState = manipulationStates.Copy;
+
         highlightIcon();
 
         ArrayList copyObjects = new ArrayList();
-
         foreach (GameObject objects in listOfMarkedObjects)
         {
+            GameObject copied = null;
+            if (objects.name.Contains("Cube"))
+            {
+                copied = Instantiate(clonedStages[0]);
+            }
+            else if (objects.name.Contains("Cylinder"))
+            {
+                copied = Instantiate(clonedStages[1]);
+            }
+            else if (objects.name.Contains("Sphere"))
+            {
+                copied = Instantiate(clonedStages[2]);
+            }
+            else if (objects.name.Contains("Capsule"))
+            {
+                copied = Instantiate(clonedStages[3]);
+            }
+            else if (objects.name.Contains("Pyramid"))
+            {
+                copied = Instantiate(clonedStages[4]);
+            }
+            else if (objects.name.Contains("Cone"))
+            {
+                copied = Instantiate(clonedStages[5]);
+            }
 
-            GameObject copied = Instantiate(objects.transform.parent.parent.gameObject, camera.transform);
-
-            copied.transform.GetChild(0).GetChild(0).gameObject.GetComponent<MeshRenderer>().enabled = true;
 
             // copy position
-            copied.transform.GetChild(0).GetChild(0).position = new Vector3(objects.transform.position.x, objects.transform.position.y, objects.transform.position.z);
+            copied.transform.GetChild(0).GetChild(0).position = new Vector3(objects.transform.parent.position.x, 
+                                        objects.transform.parent.position.y, objects.transform.parent.position.z);
 
             // copy rotation
             Vector3 rotation = objects.transform.eulerAngles;
@@ -589,8 +625,13 @@ public class UI_Manipulation_Script : MonoBehaviour
 
             copied.transform.GetChild(0).GetChild(0).GetComponent<Renderer>().material.SetColor("_Color", new Color(r, g, b, a));
 
-            
-            Debug.Log(copied.transform.GetChild(0).GetChild(0).gameObject.GetComponent<MeshRenderer>().enabled);
+
+            // get the outline
+            var outline = copied.transform.GetChild(0).GetChild(0).GetComponent<Outline>();
+
+            outline.OutlineMode = Outline.Mode.OutlineAll;
+            outline.OutlineColor = new Color(1-r, 1-g, 1-b, 1);
+            outline.OutlineWidth = 7f;
 
 
             copyObjects.Add(copied.transform.GetChild(0).GetChild(0).gameObject);
@@ -609,14 +650,17 @@ public class UI_Manipulation_Script : MonoBehaviour
         }
 
         listOfMarkedObjects.Clear();
+        objectsStages.Clear();
 
         foreach (GameObject copies in copyObjects)
-        {    
+        {
             listOfMarkedObjects.Add(copies);
+            objectsStages.Add(copies, copies.transform.parent.parent);
+            copies.transform.parent = camera.transform;
         }
+    
 
-        ButtonMove_Click();
-
+        ButtonMove_Click();  
     }
 
     public void setControlPadBoolsOnFalse()

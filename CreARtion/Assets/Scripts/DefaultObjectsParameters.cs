@@ -21,6 +21,9 @@ public class DefaultObjectsParameters : MonoBehaviour
         //this.GetComponent<Renderer>().material.SetColor("_EmissionColor", new Color(255.0f, 255.0f, 255.0f));
         //this.GetComponent<Renderer>().material.renderQueue = (int) UnityEngine.Rendering.RenderQueue.Transparent;
 
+        this.GetComponent<MeshRenderer>().enabled = true;
+        this.GetComponent<Collider>().enabled = true;
+
 
     }
 

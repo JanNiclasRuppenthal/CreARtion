@@ -233,7 +233,17 @@ public class UI_Selection_Script : MonoBehaviour
             listStagesPositioners.SetActive(false);
 
 
-            ScreenCapture.CaptureScreenshot(final_ScreenshotText);
+            if (Application.platform == RuntimePlatform.Android)
+            {
+                ScreenCapture.CaptureScreenshot(final_ScreenshotText);
+
+            }
+            else if (Application.platform == RuntimePlatform.IPhonePlayer)
+            {
+                // ignore
+            }
+                
+            
             Invoke("enableSelectionmode", 0.1f);
 
             // new text

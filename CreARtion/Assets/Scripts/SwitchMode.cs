@@ -21,6 +21,8 @@ public class SwitchMode : MonoBehaviour
 
 	private HashSet<GameObject> listOfMarkedObjects = new HashSet<GameObject>();
 
+	private Dictionary<GameObject, Transform> dictObjectStage = new Dictionary<GameObject, Transform>();
+
 	//private float cooldown = 0.15f;
 
 	//[SerializeField]
@@ -126,6 +128,15 @@ public class SwitchMode : MonoBehaviour
 			// save the object in HashSet
 			listOfMarkedObjects.Add(baseObject);
 
+			// save object and stage in the dictionary
+			try
+			{
+				dictObjectStage.Add(baseObject, baseObject.transform.parent.parent);
+			}
+			catch
+            {
+				//ignore
+            }
 		}
 	}
 
@@ -163,6 +174,7 @@ public class SwitchMode : MonoBehaviour
 		ui_Manipulation_Script.resetIconHighlighting();
 
 		listOfMarkedObjects.Clear();
+		dictObjectStage.Clear();
 
 		// no current state of a manipualtion mode
 		ui_Manipulation_Script.currentState = UI_Manipulation_Script.manipulationStates.Select;
@@ -220,4 +232,9 @@ public class SwitchMode : MonoBehaviour
 	public HashSet<GameObject> getListOfMarkedObjects(){
 		return listOfMarkedObjects;
 	}
+
+	public Dictionary<GameObject, Transform> getDictionaryObjectStage()
+    {
+		return dictObjectStage;
+    }
 }
