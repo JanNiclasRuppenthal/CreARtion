@@ -20,7 +20,7 @@ public class UI_Gallery : MonoBehaviour
 	void Start()
 	{
 		files = Directory.GetFiles(Application.persistentDataPath + "/", "*.png");
-		Debug.Log(files[0]);
+		//Debug.Log(files[0]);
 		Debug.Log(Application.persistentDataPath);
 		if (files.Length > 0)
 		{
@@ -65,7 +65,7 @@ public class UI_Gallery : MonoBehaviour
 
 			else
 			{
-				//canvas.GetComponent<Image>().sprite = defaultImage;
+				canvas.GetComponent<Image>().sprite = defaultImage;
 			}
 		}
 	}
