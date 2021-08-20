@@ -58,10 +58,37 @@ public class UI_Selection_Script : MonoBehaviour
         Sphere,
         Capsule,
         Pyramid,
-        Cone
+        Cone,
+        None
     }
 
     private Objects enumObjects;
+
+
+    // Start is called before the first frame update
+    void Start()
+    {
+
+        // enable cube stage and positioner as default
+        setStageAndPositioner(0);
+
+        //Select Select mode at beginning
+        uiSelectionmode.SetActive(true);
+        // and disable ui of manipulationmode
+        uiManipulationmode.SetActive(false);
+
+        enumObjects = Objects.Cube;
+
+        // save the number of shots
+        if (!PlayerPrefs.HasKey("numberOfShots"))
+        {
+            PlayerPrefs.SetInt("numberOfShots", 0);
+        }
+
+        // Highlight Cube Icon
+        ColorUtility.TryParseHtmlString("#B3F2E5", out Color myColor);
+        formIcons[0].image.color = myColor;
+    }
 
 
     private void Update()
@@ -146,31 +173,6 @@ public class UI_Selection_Script : MonoBehaviour
     }
 
 
-    // Start is called before the first frame update
-    void Start()
-    {
-
-        // enable cube stage and positioner as default
-        setStageAndPositioner(0);
-
-        //Select Select mode at beginning
-        uiSelectionmode.SetActive(true);
-        // and disable ui of manipulationmode
-        uiManipulationmode.SetActive(false);
-
-        enumObjects = Objects.Cube;
-
-        // save the number of shots
-        if (!PlayerPrefs.HasKey("numberOfShots"))
-        {
-            PlayerPrefs.SetInt("numberOfShots", 0);
-        }
-        
-        // Highlight Cube Icon
-        ColorUtility.TryParseHtmlString("#B3F2E5", out Color myColor);
-        formIcons[0].image.color = myColor;
-    }
-
     // set one stage and positioner as active
     // and disable all other stages and positioners
     private void setStageAndPositioner(int index)
@@ -234,24 +236,13 @@ public class UI_Selection_Script : MonoBehaviour
             listStagesPositioners.SetActive(false);
 
 
-            //if (Application.platform == RuntimePlatform.Android)
-            //{
-                // my first line
-                //ScreenCapture.CaptureScreenshot(final_ScreenshotText);
-                string timeStamp = System.DateTime.Now.ToString("dd-MM-yyyy-HH-mm-ss");
-                string fileName = "CreARtion Screenshot" + timeStamp + ".png";
-                string pathToSave = fileName;
-                ScreenCapture.CaptureScreenshot(pathToSave);
-                
-
-
-            /*}
-            else if (Application.platform == RuntimePlatform.IPhonePlayer)
-            {
-                // ignore
-            }*/
-                
             
+            string timeStamp = System.DateTime.Now.ToString("dd-MM-yyyy-HH-mm-ss");
+            string fileName = "CreARtion Screenshot" + timeStamp + ".png";
+            string pathToSave = fileName;
+            ScreenCapture.CaptureScreenshot(pathToSave);
+                
+
             Invoke("enableSelectionmode", 0.1f);
 
             // new text
@@ -274,88 +265,6 @@ public class UI_Selection_Script : MonoBehaviour
         uiSelectionmode.SetActive(true);
         // enable stages and positioners
         listStagesPositioners.SetActive(true);
-    }
-
-
-    public void ButtonVideocapture_Click()
-    {
-        vflag = !vflag;
-        if(vflag){
-            // video is stopped
-            buttonVideocapture.image.overrideSprite = record_sprite;
-
-            // set a new text for taking a screenshot
-            helpfulInformations.text = "Recording: 00:00";
-            // center the text
-            //helpfulInformations.transform.position = new Vector2(697.7f, 31.0f);
-
-
-            // call function after 1 second
-            Invoke("videoTimer", 1);
-
-        }
-        else
-        {
-            // video is capturing
-            buttonVideocapture.image.overrideSprite = stop_sprite;
-        }
-    }
-
-    private void videoTimer()
-    {
-        // video is stopped
-        if (!vflag)
-        {
-            //helpfulInformations.transform.position = new Vector2(675f, 31.0f);
-            helpfulInformations.text = "Recording is stopped.";
-
-            // default values
-            videocapturingTimerMinutes = 0;
-            videocapturingTimerSeconds = 0;
-
-            Invoke("changeInformationOnText", 1);
-            return;
-        }
-
-        videocapturingTimerSeconds++;
-
-        // show the right time
-        if (videocapturingTimerMinutes < 10)
-        {
-
-            if (videocapturingTimerSeconds < 10)
-            {
-                helpfulInformations.text = "Recording: 0" + videocapturingTimerMinutes + ":0" + videocapturingTimerSeconds;
-            }
-            else if (videocapturingTimerSeconds < 60)
-            {
-                helpfulInformations.text = "Recording: 0" + videocapturingTimerMinutes + ":" + videocapturingTimerSeconds;
-            }
-            else
-            {
-                videocapturingTimerMinutes++;
-                videocapturingTimerSeconds = 0;
-            }
-        }
-        else
-        {
-            if (videocapturingTimerSeconds < 10)
-            {
-                helpfulInformations.text = "Recording: " + videocapturingTimerMinutes + ":0" + videocapturingTimerSeconds;
-            }
-            else if (videocapturingTimerSeconds < 60)
-            {
-                helpfulInformations.text = "Recording: " + videocapturingTimerMinutes + ":" + videocapturingTimerSeconds;
-            }
-            else
-            {
-                videocapturingTimerMinutes++;
-                videocapturingTimerSeconds = 0;
-            }
-        }
-
-        // call function after 1 second
-        Invoke("videoTimer", 1);
     }
 
 
@@ -433,6 +342,17 @@ public class UI_Selection_Script : MonoBehaviour
         highlightIcon();
     }
 
+    // deactivate all stages to view the sculpture
+    public void ButtonDeactivate_Click()
+    {
+        setStageAndPositioner(6);
+
+        enumObjects = Objects.None;
+        changeInformationOnText();
+
+        highlightIcon();
+    }
+
 
     public void ButtonMainMenu_Click()
     {
@@ -443,8 +363,11 @@ public class UI_Selection_Script : MonoBehaviour
     // this method will be called in each click() method
     private void changeInformationOnText()
     {
-        // set the old position
-        //helpfulInformations.transform.position = new Vector2(640.5f, 44.1f);
+        if (enumObjects == Objects.None)
+        {
+            helpfulInformations.text = "Move your device to the sculpture to see all the details.";
+            return;
+        }
 
         // change the text to the information how to place objects
         helpfulInformations.text = "Tap to place " + enumObjects.ToString() + ".\nOr tap on object to manipulate.";
