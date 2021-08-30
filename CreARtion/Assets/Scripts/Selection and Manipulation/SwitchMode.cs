@@ -14,6 +14,8 @@ public class SwitchMode : MonoBehaviour
 	public GameObject uiRotation;
 	public GameObject uiControlPad;
 	public GameObject switchMoveControl;
+	public GameObject uiColourSlider;
+	public GameObject uiStretchButtons;
 	public UI_Manipulation_Script ui_Manipulation_Script;
 
 	
@@ -100,15 +102,7 @@ public class SwitchMode : MonoBehaviour
 			foreach (GameObject markedObjects in listOfMarkedObjects)
             {
 				if (markedObjects == baseObject)
-                {
-					//listOfMarkedObjects.Remove(baseObject);
-					//Debug.Log(listOfMarkedObjects.Count+1);
-
-					//var outlineBaseObject = baseObject.GetComponent<Outline>();
-
-					//outlineBaseObject.OutlineMode = Outline.Mode.OutlineHidden;
-					//outlineBaseObject.OutlineColor = new Color(0, 0, 0, 0);
-					//outlineBaseObject.OutlineWidth = 0f;
+				{ 
 
 					return;
                 }
@@ -153,6 +147,7 @@ public class SwitchMode : MonoBehaviour
 		uiRotation.SetActive(false);
 		uiControlPad.SetActive(false);
 		switchMoveControl.SetActive(false);
+		uiColourSlider.SetActive(false);
 
 
 		// there is no outline after you enter the selectionmode
@@ -189,6 +184,8 @@ public class SwitchMode : MonoBehaviour
 		listStagesPositioners.SetActive(false);
 		uiSelectionmode.SetActive(false);
 		uiControlPad.SetActive(false);
+		uiColourSlider.SetActive(false);
+		uiStretchButtons.SetActive(false);
 		ui_Manipulation_Script.setControlPadBoolsOnFalse();
 
 		// enable the manipulationmode

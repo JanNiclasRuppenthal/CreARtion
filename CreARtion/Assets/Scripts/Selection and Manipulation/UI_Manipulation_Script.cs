@@ -35,9 +35,15 @@ public class UI_Manipulation_Script : MonoBehaviour
     // hashtable with the parents of the objects and their stages.
     private Dictionary<GameObject, Transform> objectsStages;
 
+    // Variables for stretching
     float initialFingersDistance;
     Vector3 initialScale;
     private float initialScaleDir;
+    public GameObject uiListStretchButtons;
+    public Button[] stretchButtons = new Button[3];
+    private bool stretch_x = true;
+    private bool stretch_y = false;
+    private bool stretch_z = false;
 
     // boolean variables control pad
     private bool up_y = false;
@@ -46,6 +52,8 @@ public class UI_Manipulation_Script : MonoBehaviour
     private bool left_x = false;
     private bool up_z = false;
     private bool down_z = false;
+    private bool rotate_right = false;
+    private bool rotate_left = false;
 
     // control pad
     public GameObject controlPad;
@@ -131,50 +139,66 @@ public class UI_Manipulation_Script : MonoBehaviour
         {
             foreach (GameObject objects in listOfMarkedObjects)
             {
-                Vector3 pos = objects.transform.position;
-                objects.transform.position = new Vector3(pos.x, pos.y + speed, pos.z);
+                Vector3 pos = objects.transform.parent.position;
+                objects.transform.parent.position = new Vector3(pos.x, pos.y + speed, pos.z);
             }
         }
-        else if(down_y)
+        if(down_y)
+        {
+            foreach (GameObject objects in listOfMarkedObjects)
+            {
+                Vector3 pos = objects.transform.parent.position;
+                objects.transform.parent.position = new Vector3(pos.x, pos.y - speed, pos.z);
+            }
+        }
+        if (right_x)
+        {
+            foreach (GameObject objects in listOfMarkedObjects)
+            {
+                Vector3 pos = objects.transform.parent.position;
+                objects.transform.parent.position = new Vector3(pos.x + speed, pos.y, pos.z);
+            }
+        }
+        if (left_x)
+        {
+            foreach (GameObject objects in listOfMarkedObjects)
+            {
+                Vector3 pos = objects.transform.parent.position;
+                objects.transform.parent.position = new Vector3(pos.x - speed, pos.y, pos.z);
+            }
+        }
+        if (up_z)
+        {
+            foreach (GameObject objects in listOfMarkedObjects)
+            {
+                Vector3 pos = objects.transform.parent.position;
+                objects.transform.parent.position = new Vector3(pos.x, pos.y, pos.z + speed);
+            }
+        }
+        if (down_z)
         {
             foreach (GameObject objects in listOfMarkedObjects)
             {
                 Vector3 pos = objects.transform.position;
-                objects.transform.position = new Vector3(pos.x, pos.y - speed, pos.z);
+                objects.transform.parent.position = new Vector3(pos.x, pos.y, pos.z - speed);
             }
         }
-        else if (right_x)
-        {
-            foreach (GameObject objects in listOfMarkedObjects)
-            {
-                Vector3 pos = objects.transform.position;
-                objects.transform.position = new Vector3(pos.x + speed, pos.y, pos.z);
-            }
-        }
-        else if (left_x)
-        {
-            foreach (GameObject objects in listOfMarkedObjects)
-            {
-                Vector3 pos = objects.transform.position;
-                objects.transform.position = new Vector3(pos.x - speed, pos.y, pos.z);
-            }
-        }
-        else if (up_z)
-        {
-            foreach (GameObject objects in listOfMarkedObjects)
-            {
-                Vector3 pos = objects.transform.position;
-                objects.transform.position = new Vector3(pos.x, pos.y, pos.z + speed);
-            }
-        }
-        else if (down_z)
-        {
-            foreach (GameObject objects in listOfMarkedObjects)
-            {
-                Vector3 pos = objects.transform.position;
-                objects.transform.position = new Vector3(pos.x, pos.y, pos.z - speed);
-            }
-        }
+        //else if (rotate_right)
+        //{
+        //    foreach(GameObject objects in listOfMarkedObjects)
+        //    {
+        //        Vector3 v = objects.transform.localRotation.eulerAngles;
+        //        objects.transform.eulerAngles = new Vector3(v.x, v.y + speed * 10, v.z);
+        //    }
+        //}
+        //if (rotate_left)
+        //{
+        //    foreach(GameObject objects in listOfMarkedObjects)
+        //    {
+        //        Vector3 v = objects.transform.localRotation.eulerAngles;
+        //        objects.transform.localEulerAngles = new Vector3(v.x, v.y - speed * 10, v.z);
+        //    }
+        //}
     }
 
     
@@ -245,6 +269,8 @@ public class UI_Manipulation_Script : MonoBehaviour
         // deactivate the color UI 
         uiColor.SetActive(false);
 
+        uiListStretchButtons.SetActive(false);
+
         TextContainer.SetActive(true);
         helpfulInformations.text = "Tap on the objects to select them.";
     }
@@ -265,6 +291,8 @@ public class UI_Manipulation_Script : MonoBehaviour
 
         // deactivate the color UI 
         uiColor.SetActive(false);
+
+        uiListStretchButtons.SetActive(false);
 
         highlightIcon();
 
@@ -340,6 +368,8 @@ public class UI_Manipulation_Script : MonoBehaviour
         // deactivate the color UI 
         uiColor.SetActive(false);
 
+        uiListStretchButtons.SetActive(false);
+
         currentState = manipulationStates.Resize; 
         
         highlightIcon();
@@ -393,6 +423,8 @@ public class UI_Manipulation_Script : MonoBehaviour
         switchMoveControl.SetActive(false);
         setControlPadBoolsOnFalse();
 
+        uiListStretchButtons.SetActive(false);
+
         currentState = manipulationStates.Rotate;
         
         highlightIcon();
@@ -423,12 +455,16 @@ public class UI_Manipulation_Script : MonoBehaviour
         // deactivate the color UI 
         uiColor.SetActive(false);
 
+        uiListStretchButtons.SetActive(true);
+
         currentState = manipulationStates.Stretch;
         
         highlightIcon();
 
-        TextContainer.SetActive(true);
-        helpfulInformations.text = "Use the two finger gesture along the x-, y- or z-axis to stretch the selected objects.";
+        StretchX_Click();
+
+        TextContainer.SetActive(false);
+        //helpfulInformations.text = "Use the two finger gesture along the x-, y- or z-axis to stretch the selected objects.";
 
     }
 
@@ -438,15 +474,15 @@ public class UI_Manipulation_Script : MonoBehaviour
     {
         int fingersOnScreen = 0;
 
-        float xAngle;
-        float yAngle;
-        float zAngle;
-        float zAngle2;
-        float xAngleOpossite;
-        float yAngleOpossite;
-        float zAngleOpossite;
+        //float xAngle;
+        //float yAngle;
+        //float zAngle;
+        //float zAngle2;
+        //float xAngleOpossite;
+        //float yAngleOpossite;
+        //float zAngleOpossite;
 
-        TextContainer.SetActive(true);
+        //TextContainer.SetActive(true);
 
         foreach (Touch touch in Input.touches)
         {
@@ -462,36 +498,38 @@ public class UI_Manipulation_Script : MonoBehaviour
                     if (touch.phase == TouchPhase.Began)
                     {
                         initialFingersDistance = Vector2.Distance(Input.touches[0].position, Input.touches[1].position);
-                        Vector2 direction = Input.touches[1].position - Input.touches[0].position;
+                        //Vector2 direction = Input.touches[1].position - Input.touches[0].position;
                         
-                        // Get Angle of direction to axis vectors
-                        // x
-                        xAngle = Vector2.Angle(direction, new Vector2(1, 0));
-                        // y
-                        yAngle = Vector2.Angle(direction, new Vector2(0, 1));
-                        // z
-                        zAngle = Vector2.Angle(direction, new Vector2(1, 1));
-                        zAngle2 = Vector2.Angle(direction, new Vector2(1, -1));
+                        //// Get Angle of direction to axis vectors
+                        //// x
+                        //xAngle = Vector2.Angle(direction, new Vector2(1, 0));
+                        //// y
+                        //yAngle = Vector2.Angle(direction, new Vector2(0, 1));
+                        //// z
+                        //zAngle = Vector2.Angle(direction, new Vector2(1, 1));
+                        //zAngle2 = Vector2.Angle(direction, new Vector2(1, -1));
 
-                        xAngleOpossite = Vector2.Angle(direction, new Vector2(-1, 0));
-                        // y
-                        yAngleOpossite = Vector2.Angle(direction, new Vector2(0, -1));
-                        // z
-                        zAngleOpossite = Vector2.Angle(direction, new Vector2(-1, 1));
+                        //xAngleOpossite = Vector2.Angle(direction, new Vector2(-1, 0));
+                        //// y
+                        //yAngleOpossite = Vector2.Angle(direction, new Vector2(0, -1));
+                        //// z
+                        //zAngleOpossite = Vector2.Angle(direction, new Vector2(-1, 1));
 
-                        float min = Mathf.Min(Mathf.Min(Mathf.Min(xAngle, yAngle), zAngle), zAngle2);
-                        min = Mathf.Min(min, Mathf.Min(Mathf.Min(xAngleOpossite, yAngleOpossite), zAngleOpossite));
+                        //float min = Mathf.Min(Mathf.Min(Mathf.Min(xAngle, yAngle), zAngle), zAngle2);
+                        //min = Mathf.Min(min, Mathf.Min(Mathf.Min(xAngleOpossite, yAngleOpossite), zAngleOpossite));
 
 
-                        if (min == xAngle || min == xAngleOpossite)
+                        if (stretch_x)
                         {
                             initialScaleDir = objects.transform.parent.localScale.x;
                             currentDir = scaleDir.ScaleX;
-                        } else if (min == yAngle || min == yAngleOpossite) 
+                        } 
+                        else if (stretch_y) 
                         {
                             initialScaleDir = objects.transform.parent.localScale.y;
                             currentDir = scaleDir.ScaleY;
-                        } else if (min == zAngle || min == zAngleOpossite) 
+                        } 
+                        else if (stretch_z) 
                         {
                             initialScaleDir = objects.transform.parent.localScale.z;
                             currentDir = scaleDir.ScaleZ;
@@ -532,7 +570,50 @@ public class UI_Manipulation_Script : MonoBehaviour
             }
         }
     }
-    
+
+    // methods for the buttons
+    public void StretchX_Click()
+    {
+        stretch_x = true;
+        stretch_y = false;
+        stretch_z = false;
+
+        // change colour of the button
+        ColorUtility.TryParseHtmlString("#B3F2E5", out Color myColor);
+
+        stretchButtons[0].image.color = myColor;
+        stretchButtons[1].image.color = Color.white;
+        stretchButtons[2].image.color = Color.white;
+    }
+
+    public void StretchY_Click()
+    {
+        stretch_x = false;
+        stretch_y = true;
+        stretch_z = false;
+
+        // change colour of the button
+        ColorUtility.TryParseHtmlString("#B3F2E5", out Color myColor);
+
+        stretchButtons[0].image.color = Color.white;
+        stretchButtons[1].image.color = myColor;
+        stretchButtons[2].image.color = Color.white;
+    }
+
+    public void StretchZ_Click()
+    {
+        stretch_x = false;
+        stretch_y = false;
+        stretch_z = true;
+
+        // change colour of the button
+        ColorUtility.TryParseHtmlString("#B3F2E5", out Color myColor);
+
+        stretchButtons[0].image.color = Color.white;
+        stretchButtons[1].image.color = Color.white;
+        stretchButtons[2].image.color = myColor;
+    }
+
     public void Color_Click()
     {
         // if the user moved the objects around before
@@ -544,6 +625,8 @@ public class UI_Manipulation_Script : MonoBehaviour
         controlPadIsNotActive = false;
         switchMoveControl.SetActive(false);
         setControlPadBoolsOnFalse();
+
+        uiListStretchButtons.SetActive(false);
 
         // activate color UI
         uiColor.SetActive(true);
@@ -674,20 +757,6 @@ public class UI_Manipulation_Script : MonoBehaviour
     }
 
 
-    // TODO: Can be deleted, since we merged the moving controls
-    public void Buttontest_Click()
-    {
-        // if the user moved the objects around before
-        removeObjectsFromCamera();
-
-        // deactivate the rotation UI and Color UI
-        uiRotation.SetActive(false);
-        uiColor.SetActive(false);
-
-        controlPad.SetActive(true);
-        switchMoveControl.SetActive(true);
-    }
-
     public void ButtonUP_Click(bool up)
     {
         up_y = up;
@@ -717,5 +786,15 @@ public class UI_Manipulation_Script : MonoBehaviour
     public void ButtonDOWNZ_Click(bool down)
     {
         down_z = down;
+    }
+
+    public void ButtonRightROTATE_Click(bool right)
+    {
+        rotate_right = right;
+    }
+
+    public void ButtonLeftROTATE_Click(bool left)
+    {
+        rotate_left = left;
     }
 }

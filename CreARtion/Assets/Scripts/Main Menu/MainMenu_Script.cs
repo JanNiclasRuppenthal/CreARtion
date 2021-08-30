@@ -28,18 +28,8 @@ public class MainMenu_Script : MonoBehaviour
         SceneManager.LoadScene("CreARtion");
     }
 
-    public void LegoMode_Click()
-    {
-        SceneManager.LoadScene("Lego-Mode");
-    }
-
     public void Gallery_Click()
     {
         SceneManager.LoadScene("Gallery");
-    }
-
-    public void Options_Click()
-    {
-        // a new UI appears
     }
 }
