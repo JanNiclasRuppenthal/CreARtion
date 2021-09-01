@@ -13,7 +13,7 @@ public class UI_Manipulation_Script : MonoBehaviour
     public Text helpfulInformations;
     public GameObject scrollableListManipulations;
 
-    public GameObject[] clonedStages = new GameObject[6];
+    public GameObject[] clonedStages = new GameObject[10];
     
 
     //Rotation-UI
@@ -685,6 +685,22 @@ public class UI_Manipulation_Script : MonoBehaviour
             else if (objects.name.Contains("Cone"))
             {
                 copied = Instantiate(clonedStages[5]);
+            }
+            else if (objects.name.Contains("Hemisphere"))
+            {
+                copied = Instantiate(clonedStages[6]);
+            }
+            else if (objects.name.Contains("Tube"))
+            {
+                copied = Instantiate(clonedStages[7]);
+            }
+            else if (objects.name.Contains("Ring"))
+            {
+                copied = Instantiate(clonedStages[8]);
+            }
+            else if (objects.name.Contains("Prism"))
+            {
+                copied = Instantiate(clonedStages[9]);
             }
 
 

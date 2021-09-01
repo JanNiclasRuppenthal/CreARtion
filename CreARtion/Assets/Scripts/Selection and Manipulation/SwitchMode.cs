@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using Vuforia;
+using Object = UnityEngine.Object;
 
 public class SwitchMode : MonoBehaviour
 {
@@ -226,6 +227,21 @@ public class SwitchMode : MonoBehaviour
 		// switch to the selectionmode
 		switchToSelectionmode();
     }
+	
+	public void clearAllButton_OnClick()
+	{
+		// if the user moved the objects around before
+		ui_Manipulation_Script.removeObjectsFromCamera();
+
+		// TODO: destroy all placed objects
+		
+
+		// reset Icon Highlighting
+		ui_Manipulation_Script.resetIconHighlighting();
+		
+		// switch to the selectionmode
+		switchToSelectionmode();
+	}
 
 	// Getter
 	public HashSet<GameObject> getListOfMarkedObjects(){

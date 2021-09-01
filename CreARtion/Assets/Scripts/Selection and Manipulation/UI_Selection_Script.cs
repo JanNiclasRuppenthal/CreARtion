@@ -10,7 +10,6 @@ using System;
 
 public class UI_Selection_Script : MonoBehaviour
 {
-
     // two different uis
     public GameObject uiSelectionmode;
     public GameObject uiManipulationmode;
@@ -41,13 +40,13 @@ public class UI_Selection_Script : MonoBehaviour
     */
 
     // List of stages and positioners
-    public int size = 6;
-    public GameObject[] stageAndPositioners = new GameObject[6];
-    public AnchorBehaviour[] stages = new AnchorBehaviour[6];
-    public ContentPositioningBehaviour[] positioner = new ContentPositioningBehaviour[6];
+    public int size = 10;
+    public GameObject[] stageAndPositioners = new GameObject[10];
+    public AnchorBehaviour[] stages = new AnchorBehaviour[10];
+    public ContentPositioningBehaviour[] positioner = new ContentPositioningBehaviour[10];
 
     // List of Buttons
-    public Button[] formIcons = new Button[6];
+    public Button[] formIcons = new Button[11];
 
 
     // enumeration of all modes
@@ -59,6 +58,10 @@ public class UI_Selection_Script : MonoBehaviour
         Capsule,
         Pyramid,
         Cone,
+        Hemisphere,
+        Tube,
+        Ring,
+        Prism,
         None
     }
 
@@ -128,6 +131,18 @@ public class UI_Selection_Script : MonoBehaviour
             case Objects.Cone:
                 positioner[5].AnchorStage = stages[5];
                 break;
+            case Objects.Hemisphere:
+                positioner[6].AnchorStage = stages[6];
+                break;
+            case Objects.Tube:
+                positioner[7].AnchorStage = stages[7];
+                break;
+            case Objects.Ring:
+                positioner[8].AnchorStage = stages[8];
+                break;
+            case Objects.Prism:
+                positioner[9].AnchorStage = stages[9];
+                break;
 
             default: break;
         }
@@ -159,6 +174,21 @@ public class UI_Selection_Script : MonoBehaviour
                 break;
             case Objects.Cone:
                 formIcons[5].image.color = myColor;
+                break;
+            case Objects.Hemisphere:
+                formIcons[6].image.color = myColor;
+                break;
+            case Objects.Tube:
+                formIcons[7].image.color = myColor;
+                break;
+            case Objects.Ring:
+                formIcons[8].image.color = myColor;
+                break;
+            case Objects.Prism:
+                formIcons[9].image.color = myColor;
+                break;
+            case Objects.None:
+                formIcons[10].image.color = myColor;
                 break;
             default: break;
         }
@@ -341,11 +371,59 @@ public class UI_Selection_Script : MonoBehaviour
         
         highlightIcon();
     }
+    
+    // In this method you enable hemisphere stage and positioner and
+    // disable all other stages and positioners
+    public void ButtonHemisphere_Click()
+    {
+        setStageAndPositioner(6);
+
+        enumObjects = Objects.Hemisphere;
+        changeInformationOnText();
+        
+        highlightIcon();
+    }
+    
+    // In this method you enable tube stage and positioner and
+    // disable all other stages and positioners
+    public void ButtonTube_Click()
+    {
+        setStageAndPositioner(7);
+
+        enumObjects = Objects.Tube;
+        changeInformationOnText();
+        
+        highlightIcon();
+    }
+
+    // In this method you enable ring stage and positioner and
+    // disable all other stages and positioners
+    public void ButtonRing_Click()
+    {
+        setStageAndPositioner(8);
+
+        enumObjects = Objects.Ring;
+        changeInformationOnText();
+        
+        highlightIcon();
+    }
+    
+    // In this method you enable prism stage and positioner and
+    // disable all other stages and positioners
+    public void ButtonPrism_Click()
+    {
+        setStageAndPositioner(9);
+
+        enumObjects = Objects.Prism;
+        changeInformationOnText();
+        
+        highlightIcon();
+    }
 
     // deactivate all stages to view the sculpture
     public void ButtonDeactivate_Click()
     {
-        setStageAndPositioner(6);
+        setStageAndPositioner(10);
 
         enumObjects = Objects.None;
         changeInformationOnText();
