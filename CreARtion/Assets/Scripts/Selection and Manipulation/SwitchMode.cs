@@ -17,6 +17,11 @@ public class SwitchMode : MonoBehaviour
 	public GameObject switchMoveControl;
 	public GameObject uiColourSlider;
 	public GameObject uiStretchButtons;
+	public GameObject moveUI;
+
+	// ArrayList of all UI GameObjects
+	private ArrayList listUI = new ArrayList();
+
 	public UI_Manipulation_Script ui_Manipulation_Script;
 
 	
@@ -26,62 +31,101 @@ public class SwitchMode : MonoBehaviour
 
 	private Dictionary<GameObject, Transform> dictObjectStage = new Dictionary<GameObject, Transform>();
 
-	//private float cooldown = 0.15f;
 
-	//[SerializeField]
-	//private float timeDelay = 0.1f;
+	void Start()
+    {
+		// add every UI GameObject to the ArrayList
+		listUI.AddRange(new List<GameObject>
+		{
+			uiSelectionmode,
+			uiManipulationmode,
+			uiRotation,
+			uiControlPad,
+			switchMoveControl,
+			uiColourSlider,
+			uiStretchButtons,
+			moveUI
+		});
+    }
 
-	// Update is called once per frame
-	void Update()
-	{
 
-		if (ui_Manipulation_Script.currentState != UI_Manipulation_Script.manipulationStates.Select)
+    // Update is called once per frame
+    void Update()
+    {
+
+        if (ui_Manipulation_Script.currentState != UI_Manipulation_Script.manipulationStates.Select)
         {
-			// do NOT detect a gameobject in the scene
+            // do NOT detect a gameobject in the scene
+        }
+
+        if (Input.touchCount > 0 && Input.touches[0].phase == TouchPhase.Began /*&& Time.time > cooldown*/)
+        {
+            Ray ray = Camera.main.ScreenPointToRay(Input.GetTouch(0).position);
+
+            // behind the list
+            // Check if the mouse was clicked over a UI element
+            if (EventSystem.current.IsPointerOverGameObject())
+            {
+                return;
+            }
+
+            //cooldown = Time.time + timeDelay;
+
+            markObjects(ray);
         }
 
 
-		// Touching Objects
-		else if (Input.GetMouseButton(0) /*&& Time.time > cooldown*/)
-		{
-			Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        // Touching Objects
+#if UNITY_EDITOR
+        if (Input.GetMouseButton(0) /*&& Time.time > cooldown*/)
+        {
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
-			// behind the list
-			// Check if the mouse was clicked over a UI element
-			if (EventSystem.current.IsPointerOverGameObject())
-			{
-				return;
-			}
+            // behind the list
+            // Check if the mouse was clicked over a UI element
+            if (EventSystem.current.IsPointerOverGameObject())
+            {
+                return;
+            }
 
-			//cooldown = Time.time + timeDelay;
+            //cooldown = Time.time + timeDelay;
 
-			markObjects(ray);
-		}
-		else if (Input.touchCount > 0 && Input.touches[0].phase == TouchPhase.Began /*&& Time.time > cooldown*/)
-		{
-			Ray ray = Camera.main.ScreenPointToRay(Input.GetTouch(0).position);
+            markObjects(ray);
+        }
+#endif
+    }
 
-			// behind the list
-			// Check if the mouse was clicked over a UI element
-			if (EventSystem.current.IsPointerOverGameObject())
-			{
-				return;
-			}
+    public void OnPointerDown(PointerEventData eventData)
+    {
+        Debug.Log("Hier");
+        if (ui_Manipulation_Script.currentState != UI_Manipulation_Script.manipulationStates.Select)
+        {
+            // do NOT detect a gameobject in the scene
+        }
 
-			//cooldown = Time.time + timeDelay;
+        Ray ray = Camera.main.ScreenPointToRay(Input.GetTouch(0).position);
 
-			markObjects(ray);
-		}
-	}
+        // behind the list
+        // Check if the mouse was clicked over a UI element
+        if (EventSystem.current.IsPointerOverGameObject())
+        {
+            return;
+        }
+
+        //cooldown = Time.time + timeDelay;
+
+        markObjects(ray);
+    }
 
 
-	/*
+
+    /*
 	 * This method is called several times because of the update() function.
 	 * It will be called every frame.
 	 * That is the reason why objects are copied several times. 
 	 * The ArrayList had several instances of the same object.
 	 */
-	private void markObjects(Ray ray)
+    private void markObjects(Ray ray)
     {
 
 		// look for Hit
@@ -136,23 +180,33 @@ public class SwitchMode : MonoBehaviour
 	}
 
 
+	public void activateGameObjects(GameObject gameObject)
+    {
+		foreach (GameObject ui in listUI)
+		{
+			if (ui == gameObject)
+			{
+				ui.SetActive(true);
+				continue;
+			}
+
+			ui.SetActive(false);
+		}
+	}
+
+
 	// the x-button in the manipulation mode calls this function
 	public void switchToSelectionmode()
     {
 		// activate stages and positioner and the ui of the selectionmode
 		listStagesPositioners.SetActive(true);
-		uiSelectionmode.SetActive(true);
 
 		// disable the manipulationmode and the UIs of the manipulationstools
-		uiManipulationmode.SetActive(false);
-		uiRotation.SetActive(false);
-		uiControlPad.SetActive(false);
-		switchMoveControl.SetActive(false);
-		uiColourSlider.SetActive(false);
+		activateGameObjects(uiSelectionmode);
 
 
 		// there is no outline after you enter the selectionmode
-		foreach(GameObject item in listOfMarkedObjects)
+		foreach (GameObject item in listOfMarkedObjects)
         {
 			var outline = item.GetComponent<Outline>();
 
@@ -183,16 +237,13 @@ public class SwitchMode : MonoBehaviour
 	{
 		// deactivate stages and positioner and the ui of the selectionmode
 		listStagesPositioners.SetActive(false);
-		uiSelectionmode.SetActive(false);
-		uiControlPad.SetActive(false);
-		uiColourSlider.SetActive(false);
-		uiStretchButtons.SetActive(false);
+		activateGameObjects(uiManipulationmode);
+
 		ui_Manipulation_Script.setControlPadBoolsOnFalse();
 
-		// enable the manipulationmode
-		uiManipulationmode.SetActive(true);
-
 		ui_Manipulation_Script.highlightIcon();
+
+		ui_Manipulation_Script.ButtonSelect_Click();
 
 	}
 
@@ -233,8 +284,17 @@ public class SwitchMode : MonoBehaviour
 		// if the user moved the objects around before
 		ui_Manipulation_Script.removeObjectsFromCamera();
 
-		// TODO: destroy all placed objects
 		
+
+		// destroy all placed objects
+		foreach (GameObject item in GameObject.FindGameObjectsWithTag("MidAirStage"))
+		{
+			//GameObject temp = item.transform.parent.parent.gameObject;
+			Destroy(item);
+		}
+
+		// clear the listOfMarkedObjects
+		listOfMarkedObjects.Clear();
 
 		// reset Icon Highlighting
 		ui_Manipulation_Script.resetIconHighlighting();

@@ -3,13 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using UnityEngine.EventSystems;
 using Vuforia;
 using System.IO;
 using System;
 
 
 public class UI_Selection_Script : MonoBehaviour
-{
+{ 
+
     // two different uis
     public GameObject uiSelectionmode;
     public GameObject uiManipulationmode;
@@ -96,17 +98,17 @@ public class UI_Selection_Script : MonoBehaviour
 
     private void Update()
     {
-
         // Touching the Objects
         if (Input.GetMouseButton(0))
         {
             setStage();
         }
-        else if((Input.touchCount > 0 && Input.touches[0].phase == TouchPhase.Began))
+        else if ((Input.touchCount > 0 && Input.touches[0].phase == TouchPhase.Began))
         {
             setStage();
         }
     }
+
 
     private void setStage()
     {
@@ -234,59 +236,31 @@ public class UI_Selection_Script : MonoBehaviour
 
     private IEnumerator takeScreenshot()
     {
-        // one second later
-        screenshotTimer++;
-
-        // after 3 seconds, it should take a screenshot
-        if (screenshotTimer <= 3)
-        {
-            // new text
-            helpfulInformations.text = "Screenshot taken in " + (3 - screenshotTimer);
-
-            // call function 
-            StartCoroutine("takeScreenshot");
-
-        }
-        else
-        {
-            // number of screenshots should always be three digits
-            string numberUnderTenOrHundred = "";
-            numberUnderTenOrHundred = (number < 100 && number > 10 ? "0" : "00");
-
-            // file name
-            string final_ScreenshotText = "CreARtion " +  " Screenshot " + numberUnderTenOrHundred + PlayerPrefs.GetInt("numberOfShots") + ".png";
-
-            // save the new number of shots
-            PlayerPrefs.SetInt("numberOfShots", ++number);
-
-            // disable the uiSelectionmode
-            // capture a screenshot
-            // enable the uiSelectionmode
-            uiSelectionmode.SetActive(false);
-            listStagesPositioners.SetActive(false);
+        
+        // disable the uiSelectionmode
+        // capture a screenshot
+        // enable the uiSelectionmode
+        uiSelectionmode.SetActive(false);
+        listStagesPositioners.SetActive(false);
 
 
             
-            string timeStamp = System.DateTime.Now.ToString("dd-MM-yyyy-HH-mm-ss");
-            string fileName = "CreARtion Screenshot" + timeStamp + ".png";
-            string pathToSave = fileName;
-            ScreenCapture.CaptureScreenshot(pathToSave);
+        string timeStamp = System.DateTime.Now.ToString("dd-MM-yyyy-HH-mm-ss");
+        string fileName = "CreARtion Screenshot" + timeStamp + ".png";
+        string pathToSave = fileName;
+        ScreenCapture.CaptureScreenshot(pathToSave);
                 
 
-            Invoke("enableSelectionmode", 0.1f);
+        Invoke("enableSelectionmode", 0.1f);
 
-            // new text
-            helpfulInformations.text = "Screenshot was taken.";
+        // new text
+        helpfulInformations.text = "Screenshot was taken.";
 
+        // call function after 1 second
+        Invoke("changeInformationOnText", 1);
 
-            // reset variable
-            screenshotTimer = 0;
-
-            // call function after 1 second
-            Invoke("changeInformationOnText", 1);
-
-            yield return new WaitForEndOfFrame();
-        }
+        yield return new WaitForEndOfFrame();
+        
     }
 
     // enable the selectionmode ui
@@ -450,4 +424,6 @@ public class UI_Selection_Script : MonoBehaviour
         // change the text to the information how to place objects
         helpfulInformations.text = "Tap to place " + enumObjects.ToString() + ".\nOr tap on object to manipulate.";
     }
+
+    
 }

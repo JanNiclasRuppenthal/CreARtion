@@ -32,7 +32,6 @@ public abstract class CircularRange : MonoBehaviour
     void Start()
     {
         listofObjects = sw.getListOfMarkedObjects();
-
     }
 
     public enum State
@@ -58,8 +57,12 @@ public abstract class CircularRange : MonoBehaviour
             CircularButtonState = State.DRAGGING;
         }
 
-        float f = Vector3.Angle(Vector3.up, Input.mousePosition - Origin.position);
-        bool onTheRight = Input.mousePosition.x > Origin.position.x;
+        //float f = Vector3.Angle(Vector3.up, Input.mousePosition - Origin.position);
+        //bool onTheRight = Input.mousePosition.x > Origin.position.x;
+
+        float f = Vector3.Angle(Vector3.up, Input.touches[0].position - (Vector2) Origin.position);
+        bool onTheRight = Input.touches[0].position.x > Origin.position.x;
+
         int detectedValue = onTheRight ? (int)f : 180 + (180 - (int)f);
 
         if (detectedValue > 350)
@@ -87,7 +90,7 @@ public abstract class CircularRange : MonoBehaviour
     }
 
 
-    // Rotate Object around Z axis
+    // Rotate Object around one axis
     public abstract void rotate();
 
     public void Reset()

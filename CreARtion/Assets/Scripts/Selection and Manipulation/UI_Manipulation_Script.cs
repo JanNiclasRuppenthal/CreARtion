@@ -14,7 +14,10 @@ public class UI_Manipulation_Script : MonoBehaviour
     public GameObject scrollableListManipulations;
 
     public GameObject[] clonedStages = new GameObject[10];
-    
+
+    // ArrayList of all UI GameObjects
+    private ArrayList listUI = new ArrayList();
+
 
     //Rotation-UI
     public GameObject uiRotation;
@@ -26,6 +29,10 @@ public class UI_Manipulation_Script : MonoBehaviour
     public CircularRangeControlX circularX;
     public CircularRangeControlY circularY;
     public CircularRangeControlZ circularZ;
+
+    // Move-UI and bool variable
+    public GameObject moveUI;
+    private bool movement;
 
 
     // arraylist of marked objects
@@ -98,6 +105,17 @@ public class UI_Manipulation_Script : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        // add all UI elemtents
+        listUI.AddRange(new List<GameObject>{
+            uiRotation,
+            controlPad,
+            switchMoveControl,
+            moveUI,
+            uiColor,
+            uiListStretchButtons,
+            TextContainer
+        });
+
         // get the ArrayList
         listOfMarkedObjects = sw.getListOfMarkedObjects();
 
@@ -118,6 +136,7 @@ public class UI_Manipulation_Script : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // TODO: better writing
         switch (currentState)
         {
             case manipulationStates.Move:
@@ -183,22 +202,22 @@ public class UI_Manipulation_Script : MonoBehaviour
                 objects.transform.parent.position = new Vector3(pos.x, pos.y, pos.z - speed);
             }
         }
-        //else if (rotate_right)
-        //{
-        //    foreach(GameObject objects in listOfMarkedObjects)
-        //    {
-        //        Vector3 v = objects.transform.localRotation.eulerAngles;
-        //        objects.transform.eulerAngles = new Vector3(v.x, v.y + speed * 10, v.z);
-        //    }
-        //}
-        //if (rotate_left)
-        //{
-        //    foreach(GameObject objects in listOfMarkedObjects)
-        //    {
-        //        Vector3 v = objects.transform.localRotation.eulerAngles;
-        //        objects.transform.localEulerAngles = new Vector3(v.x, v.y - speed * 10, v.z);
-        //    }
-        //}
+        if (rotate_right)
+        {
+            foreach (GameObject objects in listOfMarkedObjects)
+            {
+                Vector3 v = objects.transform.eulerAngles;
+                objects.transform.eulerAngles = new Vector3(v.x, v.y + speed*100, v.z);
+            }
+        }
+        if (rotate_left)
+        {
+            foreach (GameObject objects in listOfMarkedObjects)
+            {
+                Vector3 v = objects.transform.eulerAngles;
+                objects.transform.eulerAngles = new Vector3(v.x, v.y - speed*100 , v.z);
+            }
+        }
     }
 
     
@@ -246,32 +265,51 @@ public class UI_Manipulation_Script : MonoBehaviour
     }
 
 
+    private void activateGameObjects(GameObject[] array)
+    {
+        bool skip = false;
+        foreach(GameObject ui in listUI)
+        {
+            for(int i = 0; i < array.Length; i++)
+            {
+                // found the right UI element?
+                if (ui == array[i])
+                {
+                    skip = true;
+                    break;
+                }
+            }
+
+            // activate, if we found the right element
+            if (skip)
+            {
+                ui.SetActive(true);
+                skip = false;
+                continue;
+            }
+
+            // deactivate the unnecessary UI elements
+            ui.SetActive(false);
+        }
+    }
+
+
     // Buttons in the scrollable list
 
     public void ButtonSelect_Click()
     {
         // if the user moved the objects around before
         removeObjectsFromCamera();
+        movement = false;
 
         currentState = manipulationStates.Select;
 
         highlightIcon();
 
-
-        // deactivate the rotation UI 
-        uiRotation.SetActive(false);
-
-        controlPad.SetActive(false);
         controlPadIsNotActive = false;
-        switchMoveControl.SetActive(false);
         setControlPadBoolsOnFalse();
 
-        // deactivate the color UI 
-        uiColor.SetActive(false);
-
-        uiListStretchButtons.SetActive(false);
-
-        TextContainer.SetActive(true);
+        activateGameObjects(new GameObject[] {TextContainer});
         helpfulInformations.text = "Tap on the objects to select them.";
     }
 
@@ -280,30 +318,26 @@ public class UI_Manipulation_Script : MonoBehaviour
         // set current state of the UI
         currentState = manipulationStates.Move;
 
-        // deactivate the rotation UI 
-        uiRotation.SetActive(false);
-
-        controlPad.SetActive(false);
         controlPadIsNotActive = false;
         buttonSwitchMoveControl.image.overrideSprite = controlPad_sprite;
-        switchMoveControl.SetActive(true);
         setControlPadBoolsOnFalse();
-
-        // deactivate the color UI 
-        uiColor.SetActive(false);
-
-        uiListStretchButtons.SetActive(false);
 
         highlightIcon();
 
-        TextContainer.SetActive(true);
-        helpfulInformations.text = "Move your device to move your selected objects.";
+        activateGameObjects(new GameObject[] { switchMoveControl, moveUI, TextContainer });
+        helpfulInformations.text = "Hold the button down and move your device to move your selected objects.";
     }
 
  
 
     private void moveObjects()
     {
+
+        if (!movement)
+        {
+            removeObjectsFromCamera();
+            return;
+        }
         
         foreach (GameObject objects in listOfMarkedObjects)
         {
@@ -312,12 +346,18 @@ public class UI_Manipulation_Script : MonoBehaviour
         }
     }
 
+    public void holdMoveButton(bool move)
+    {
+        movement = move;
+    }
+
     public void changeMoveControl()
     {
         if (controlPadIsNotActive)
         {
             // Disable controlPad
             controlPad.SetActive(false);
+            moveUI.SetActive(true);
             TextContainer.SetActive(true);
             buttonSwitchMoveControl.image.overrideSprite = controlPad_sprite;
         }
@@ -325,10 +365,12 @@ public class UI_Manipulation_Script : MonoBehaviour
         {
             // Enable controlPad
             controlPad.SetActive(true);
+            moveUI.SetActive(false);
             TextContainer.SetActive(false);
 
-            // remove Objects from the camera
+            // if the user moved the objects around before
             removeObjectsFromCamera();
+            movement = false;
 
             buttonSwitchMoveControl.image.overrideSprite = phone_sprite;
         }
@@ -345,7 +387,6 @@ public class UI_Manipulation_Script : MonoBehaviour
 
         foreach (GameObject objects in listOfMarkedObjects)
         {
-            //objects.transform.parent = null;
             objects.transform.parent.parent = objectsStages[objects];
         }
     }
@@ -356,25 +397,16 @@ public class UI_Manipulation_Script : MonoBehaviour
     {
         // if the user moved the objects around before
         removeObjectsFromCamera();
+        movement = false;
 
-        // deactivate the rotation UI 
-        uiRotation.SetActive(false);
-
-        controlPad.SetActive(false);
         controlPadIsNotActive = false;
-        switchMoveControl.SetActive(false);
-        setControlPadBoolsOnFalse();
-
-        // deactivate the color UI 
-        uiColor.SetActive(false);
-
-        uiListStretchButtons.SetActive(false);
+        setControlPadBoolsOnFalse();;
 
         currentState = manipulationStates.Resize; 
         
         highlightIcon();
 
-        TextContainer.SetActive(true);
+        activateGameObjects(new GameObject[] {TextContainer});
         helpfulInformations.text = "Use the two finger gesture to resize the selected objects.";
     }
 
@@ -414,25 +446,17 @@ public class UI_Manipulation_Script : MonoBehaviour
     {
         // if the user moved the objects around before
         removeObjectsFromCamera();
-        
-        // deactivate the color UI 
-        uiColor.SetActive(false);
+        movement = false;
 
-        controlPad.SetActive(false);
         controlPadIsNotActive = false;
-        switchMoveControl.SetActive(false);
         setControlPadBoolsOnFalse();
-
-        uiListStretchButtons.SetActive(false);
 
         currentState = manipulationStates.Rotate;
         
         highlightIcon();
 
-        TextContainer.SetActive(false);
-        uiRotation.SetActive(true);
+        activateGameObjects(new GameObject[] {uiRotation});
 
-        // TODO: one superclass
         circularX.Reset();
         circularY.Reset();
         circularZ.Reset();
@@ -443,19 +467,10 @@ public class UI_Manipulation_Script : MonoBehaviour
     {
         // if the user moved the objects around before
         removeObjectsFromCamera();
+        movement = false;
 
-        // deactivate the rotation UI 
-        uiRotation.SetActive(false);
-
-        controlPad.SetActive(false);
         controlPadIsNotActive = false;
-        switchMoveControl.SetActive(false);
         setControlPadBoolsOnFalse();
-
-        // deactivate the color UI 
-        uiColor.SetActive(false);
-
-        uiListStretchButtons.SetActive(true);
 
         currentState = manipulationStates.Stretch;
         
@@ -463,8 +478,7 @@ public class UI_Manipulation_Script : MonoBehaviour
 
         StretchX_Click();
 
-        TextContainer.SetActive(false);
-        //helpfulInformations.text = "Use the two finger gesture along the x-, y- or z-axis to stretch the selected objects.";
+        activateGameObjects(new GameObject[] {uiListStretchButtons});
 
     }
 
@@ -473,16 +487,6 @@ public class UI_Manipulation_Script : MonoBehaviour
     public void stretchObjects()
     {
         int fingersOnScreen = 0;
-
-        //float xAngle;
-        //float yAngle;
-        //float zAngle;
-        //float zAngle2;
-        //float xAngleOpossite;
-        //float yAngleOpossite;
-        //float zAngleOpossite;
-
-        //TextContainer.SetActive(true);
 
         foreach (Touch touch in Input.touches)
         {
@@ -498,26 +502,6 @@ public class UI_Manipulation_Script : MonoBehaviour
                     if (touch.phase == TouchPhase.Began)
                     {
                         initialFingersDistance = Vector2.Distance(Input.touches[0].position, Input.touches[1].position);
-                        //Vector2 direction = Input.touches[1].position - Input.touches[0].position;
-                        
-                        //// Get Angle of direction to axis vectors
-                        //// x
-                        //xAngle = Vector2.Angle(direction, new Vector2(1, 0));
-                        //// y
-                        //yAngle = Vector2.Angle(direction, new Vector2(0, 1));
-                        //// z
-                        //zAngle = Vector2.Angle(direction, new Vector2(1, 1));
-                        //zAngle2 = Vector2.Angle(direction, new Vector2(1, -1));
-
-                        //xAngleOpossite = Vector2.Angle(direction, new Vector2(-1, 0));
-                        //// y
-                        //yAngleOpossite = Vector2.Angle(direction, new Vector2(0, -1));
-                        //// z
-                        //zAngleOpossite = Vector2.Angle(direction, new Vector2(-1, 1));
-
-                        //float min = Mathf.Min(Mathf.Min(Mathf.Min(xAngle, yAngle), zAngle), zAngle2);
-                        //min = Mathf.Min(min, Mathf.Min(Mathf.Min(xAngleOpossite, yAngleOpossite), zAngleOpossite));
-
 
                         if (stretch_x)
                         {
@@ -618,45 +602,35 @@ public class UI_Manipulation_Script : MonoBehaviour
     {
         // if the user moved the objects around before
         removeObjectsFromCamera();
+        movement = false;
 
-        // deactivate the rotation UI 
-        uiRotation.SetActive(false);
-        controlPad.SetActive(false);
         controlPadIsNotActive = false;
-        switchMoveControl.SetActive(false);
         setControlPadBoolsOnFalse();
-
-        uiListStretchButtons.SetActive(false);
-
-        // activate color UI
-        uiColor.SetActive(true);
 
         currentState = manipulationStates.Color;
         
         highlightIcon();
 
-        TextContainer.SetActive(false);
+
+        activateGameObjects(new GameObject[] {uiColor});
     }
 
     
     public void Copy_Click()
     {
-
         // if the user moved the objects around before
         removeObjectsFromCamera();
+        movement = false;
 
-        // deactivate the rotation UI and Color UI
-        uiRotation.SetActive(false);
-        uiColor.SetActive(false);
-        controlPad.SetActive(false);
         controlPadIsNotActive = false;
-        switchMoveControl.SetActive(false);
         setControlPadBoolsOnFalse();
 
         
         currentState = manipulationStates.Copy;
 
         highlightIcon();
+
+        activateGameObjects(new GameObject[] {null});
 
         ArrayList copyObjects = new ArrayList();
         foreach (GameObject objects in listOfMarkedObjects)
