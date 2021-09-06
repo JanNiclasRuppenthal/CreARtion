@@ -1,8 +1,15 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+/*
+ * This class is the abstract superclass of the three circular slider.
+ * It contains the look of the slider and get/set the currentValue of the slider.
+ * Methods:
+ *      - getter and setter of the current value
+ *      - an abstract rotate method
+ *      - a method to calculate the current value
+ */
 public abstract class CircularRange : MonoBehaviour
 {
     public Transform Origin; //center of rotation
@@ -18,7 +25,7 @@ public abstract class CircularRange : MonoBehaviour
     public int CurrentValue;
     public State CircularButtonState = State.NOT_DRAGGING;
 
-
+    // getter and setter methods
     public int getCurrentValue()
     {
         return CurrentValue;
@@ -50,38 +57,53 @@ public abstract class CircularRange : MonoBehaviour
             return;
         }
 
+        // set the current state 
         if (isClick)
+        {
             CircularButtonState = State.NOT_DRAGGING;
+        }
         else
         {
             CircularButtonState = State.DRAGGING;
         }
 
-        //float f = Vector3.Angle(Vector3.up, Input.mousePosition - Origin.position);
-        //bool onTheRight = Input.mousePosition.x > Origin.position.x;
-
-        float f = Vector3.Angle(Vector3.up, Input.touches[0].position - (Vector2) Origin.position);
-        bool onTheRight = Input.touches[0].position.x > Origin.position.x;
+        // compute the angle between (1,0,0) and the current position of the finger/mouse
+        // f \in [0, 180]
+        float f = Vector3.Angle(Vector3.up, Input.mousePosition - Origin.position);
+        bool onTheRight = Input.mousePosition.x > Origin.position.x;
 
         int detectedValue = onTheRight ? (int)f : 180 + (180 - (int)f);
 
         if (detectedValue > 350)
+        {
             detectedValue = 360;
+        }
         else if (CurrentValue == 360 && detectedValue < 10)
+        {
             detectedValue = 360;
+        }
         else if (CurrentValue == 0 && detectedValue > 350)
+        {
             detectedValue = 0;
+        }
         else if (detectedValue < 10)
+        {
             detectedValue = 0;
+        }
 
         if (!isClick)
         {
             if (detectedValue <= CurrentValue && Mathf.Abs(CurrentValue - detectedValue) > 180)
+            {
                 detectedValue = CurrentValue;
+            }
             else if (CurrentValue == 0 && detectedValue > 270)
+            {
                 detectedValue = CurrentValue;
+            }
         }
 
+        // set the value, text and fill the image
         CurrentValue = detectedValue;
         Angle.text = "" + (int)(CurrentValue * Scale / 360f) + "°";
         ImageSelected.fillAmount = CurrentValue / 360f;

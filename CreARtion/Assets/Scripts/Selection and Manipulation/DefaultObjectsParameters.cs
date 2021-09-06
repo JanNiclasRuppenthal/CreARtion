@@ -1,11 +1,13 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using Vuforia;
 
+/*
+ * This class is the solution of our copying problem.
+ * After copying, the MeshRenderer and the Collider of the objects were disabled.
+ * 
+ * But now, we enable them manually.
+ */
 public class DefaultObjectsParameters : MonoBehaviour
 {
-
     // Start is called before the first frame update
     void Start()
     {

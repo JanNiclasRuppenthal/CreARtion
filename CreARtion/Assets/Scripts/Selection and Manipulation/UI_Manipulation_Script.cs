@@ -2,17 +2,31 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using Vuforia;
-using System;
-using Image = Vuforia.Image;
 
+/*
+ * This class implements all the function for the mainpulationtools.
+ * Methods:
+ *      - set and reset the highlighting of the icons
+ *      - activate certain UI gameobjects
+ *      - select the objects
+ *      - move the objects with device / camera
+ *      - move the objects with a control pad
+ *      - remove the objects from the camera 
+ *      - resize the objects with fingers
+ *      - stretch the objects in any directions
+ *      - rotate the objects with three circular slider
+ *      - change the colour (and outline) of the objects
+ *      - copy the objects
+ */
 public class UI_Manipulation_Script : MonoBehaviour
 {
+    // main UI of the manipulationmode
     public GameObject uiManipulationmode;
     public GameObject TextContainer;
     public Text helpfulInformations;
     public GameObject scrollableListManipulations;
 
+    // for copying: an array with the cloned stages
     public GameObject[] clonedStages = new GameObject[10];
 
     // ArrayList of all UI GameObjects
@@ -34,7 +48,6 @@ public class UI_Manipulation_Script : MonoBehaviour
     public GameObject moveUI;
     private bool movement;
 
-
     // arraylist of marked objects
     public SwitchMode sw;
     private HashSet<GameObject> listOfMarkedObjects;
@@ -43,16 +56,18 @@ public class UI_Manipulation_Script : MonoBehaviour
     private Dictionary<GameObject, Transform> objectsStages;
 
     // Variables for stretching
-    float initialFingersDistance;
-    Vector3 initialScale;
-    private float initialScaleDir;
+    private float initialFingersDistance;
+    private Vector3 initialScale;
+    private float initialScaleDirX;
+    private float initialScaleDirY;
+    private float initialScaleDirZ;
     public GameObject uiListStretchButtons;
     public Button[] stretchButtons = new Button[3];
-    private bool stretch_x = true;
+    private bool stretch_x = false;
     private bool stretch_y = false;
     private bool stretch_z = false;
 
-    // boolean variables control pad
+    // private variables for the control pad
     private bool up_y = false;
     private bool down_y = false;
     private bool right_x = false;
@@ -61,6 +76,7 @@ public class UI_Manipulation_Script : MonoBehaviour
     private bool down_z = false;
     private bool rotate_right = false;
     private bool rotate_left = false;
+    private float speed = 0.005f;
 
     // control pad
     public GameObject controlPad;
@@ -70,12 +86,9 @@ public class UI_Manipulation_Script : MonoBehaviour
     public Sprite controlPad_sprite;
     public Sprite phone_sprite;
 
-    // speed
-    public float speed = 0.01f;
-
-    // camera
     public Camera camera;
 
+    // all the different states for the manipulations
     public enum manipulationStates
     {
         Select,
@@ -89,16 +102,7 @@ public class UI_Manipulation_Script : MonoBehaviour
 
     public manipulationStates currentState;
     
-    public enum scaleDir
-    {
-        ScaleX,
-        ScaleY,
-        ScaleZ
-    }
-
-    public scaleDir currentDir;
-    
-    // Icons
+    // an array with the buttons for changing the colour of the icons
     public Button[] mIcons = new Button[6];
 
 
@@ -128,6 +132,7 @@ public class UI_Manipulation_Script : MonoBehaviour
         // highlight icon after switching the mode
         highlightIcon();
 
+        // set a helpfull text
         TextContainer.SetActive(true);
         helpfulInformations.text = "Tap on the objects to select them.";
 
@@ -154,6 +159,7 @@ public class UI_Manipulation_Script : MonoBehaviour
             default: break;
         }
 
+        // logic for the control pad to move the objects
         if (up_y)
         {
             foreach (GameObject objects in listOfMarkedObjects)
@@ -264,7 +270,7 @@ public class UI_Manipulation_Script : MonoBehaviour
         }
     }
 
-
+    // this method activates certain UI elements
     private void activateGameObjects(GameObject[] array)
     {
         bool skip = false;
@@ -294,7 +300,10 @@ public class UI_Manipulation_Script : MonoBehaviour
     }
 
 
-    // Buttons in the scrollable list
+    /*
+     * All following methods implements the function of the buttons.
+     * All public methods are called by the buttons.
+     */
 
     public void ButtonSelect_Click()
     {
@@ -302,13 +311,16 @@ public class UI_Manipulation_Script : MonoBehaviour
         removeObjectsFromCamera();
         movement = false;
 
+        // set state
         currentState = manipulationStates.Select;
 
         highlightIcon();
 
+        // deactivate the controlpad
         controlPadIsNotActive = false;
         setControlPadBoolsOnFalse();
 
+        // set a helpfull text
         activateGameObjects(new GameObject[] {TextContainer});
         helpfulInformations.text = "Tap on the objects to select them.";
     }
@@ -318,12 +330,14 @@ public class UI_Manipulation_Script : MonoBehaviour
         // set current state of the UI
         currentState = manipulationStates.Move;
 
+        // deactivate the function of the control pad
         controlPadIsNotActive = false;
         buttonSwitchMoveControl.image.overrideSprite = controlPad_sprite;
         setControlPadBoolsOnFalse();
 
         highlightIcon();
 
+        // set a helpfull text
         activateGameObjects(new GameObject[] { switchMoveControl, moveUI, TextContainer });
         helpfulInformations.text = "Hold the button down and move your device to move your selected objects.";
     }
@@ -332,7 +346,7 @@ public class UI_Manipulation_Script : MonoBehaviour
 
     private void moveObjects()
     {
-
+        // move the objects only the user holds the button
         if (!movement)
         {
             removeObjectsFromCamera();
@@ -351,27 +365,27 @@ public class UI_Manipulation_Script : MonoBehaviour
         movement = move;
     }
 
+    // switch to the control pad or to the movement with device
     public void changeMoveControl()
     {
         if (controlPadIsNotActive)
         {
-            // Disable controlPad
-            controlPad.SetActive(false);
-            moveUI.SetActive(true);
-            TextContainer.SetActive(true);
+            // change the UI
+            activateGameObjects(new GameObject[] {moveUI, TextContainer});
+
+            // change the image
             buttonSwitchMoveControl.image.overrideSprite = controlPad_sprite;
         }
         else
         {
-            // Enable controlPad
-            controlPad.SetActive(true);
-            moveUI.SetActive(false);
-            TextContainer.SetActive(false);
+            // change the UI
+            activateGameObjects(new GameObject[] { controlPad });
 
             // if the user moved the objects around before
             removeObjectsFromCamera();
             movement = false;
 
+            // change the image
             buttonSwitchMoveControl.image.overrideSprite = phone_sprite;
         }
         
@@ -387,6 +401,7 @@ public class UI_Manipulation_Script : MonoBehaviour
 
         foreach (GameObject objects in listOfMarkedObjects)
         {
+            // marked objects get their stages back
             objects.transform.parent.parent = objectsStages[objects];
         }
     }
@@ -399,6 +414,7 @@ public class UI_Manipulation_Script : MonoBehaviour
         removeObjectsFromCamera();
         movement = false;
 
+        // deactivate the function of the control pad
         controlPadIsNotActive = false;
         setControlPadBoolsOnFalse();;
 
@@ -406,6 +422,7 @@ public class UI_Manipulation_Script : MonoBehaviour
         
         highlightIcon();
 
+        // set a helpfull text
         activateGameObjects(new GameObject[] {TextContainer});
         helpfulInformations.text = "Use the two finger gesture to resize the selected objects.";
     }
@@ -435,6 +452,8 @@ public class UI_Manipulation_Script : MonoBehaviour
                     {
                         var currentFingersDistance = Vector2.Distance(Input.touches[0].position, Input.touches[1].position);
                         var scaleFactor = currentFingersDistance / initialFingersDistance;
+
+                        // scale the parent of the marked object
                         objects.transform.parent.localScale = initialScale * scaleFactor;
                     }
                 }
@@ -448,6 +467,7 @@ public class UI_Manipulation_Script : MonoBehaviour
         removeObjectsFromCamera();
         movement = false;
 
+        // deactivate the functions of the control pad
         controlPadIsNotActive = false;
         setControlPadBoolsOnFalse();
 
@@ -457,6 +477,7 @@ public class UI_Manipulation_Script : MonoBehaviour
 
         activateGameObjects(new GameObject[] {uiRotation});
 
+        // reset the circular slider
         circularX.Reset();
         circularY.Reset();
         circularZ.Reset();
@@ -469,6 +490,7 @@ public class UI_Manipulation_Script : MonoBehaviour
         removeObjectsFromCamera();
         movement = false;
 
+        // deactivate the functions of the control pad
         controlPadIsNotActive = false;
         setControlPadBoolsOnFalse();
 
@@ -476,7 +498,12 @@ public class UI_Manipulation_Script : MonoBehaviour
         
         highlightIcon();
 
+        // Instantiate the initial state
         StretchX_Click();
+        stretch_y = false;
+        stretch_z = false;
+        stretchButtons[1].image.color = Color.white;
+        stretchButtons[2].image.color = Color.white;
 
         activateGameObjects(new GameObject[] {uiListStretchButtons});
 
@@ -484,7 +511,7 @@ public class UI_Manipulation_Script : MonoBehaviour
 
 
    
-    public void stretchObjects()
+    private void stretchObjects()
     {
         int fingersOnScreen = 0;
 
@@ -505,18 +532,15 @@ public class UI_Manipulation_Script : MonoBehaviour
 
                         if (stretch_x)
                         {
-                            initialScaleDir = objects.transform.parent.localScale.x;
-                            currentDir = scaleDir.ScaleX;
+                            initialScaleDirX = objects.transform.parent.localScale.x;
                         } 
-                        else if (stretch_y) 
+                        if (stretch_y) 
                         {
-                            initialScaleDir = objects.transform.parent.localScale.y;
-                            currentDir = scaleDir.ScaleY;
+                            initialScaleDirY = objects.transform.parent.localScale.y;
                         } 
-                        else if (stretch_z) 
+                        if (stretch_z) 
                         {
-                            initialScaleDir = objects.transform.parent.localScale.z;
-                            currentDir = scaleDir.ScaleZ;
+                            initialScaleDirZ = objects.transform.parent.localScale.z;
                         }
                     }
                     else
@@ -524,28 +548,21 @@ public class UI_Manipulation_Script : MonoBehaviour
                         var currentFingersDistance = Vector2.Distance(Input.touches[0].position, Input.touches[1].position);
                         var stretchFactor = currentFingersDistance / initialFingersDistance;
 
-                        float x = 0;
-                        float y = 0;
-                        float z = 0;
+                        float x = objects.transform.parent.localScale.x;
+                        float y = objects.transform.parent.localScale.y;
+                        float z = objects.transform.parent.localScale.z;
 
-                        
-                        switch (currentDir)
+                        if (stretch_x)
                         {
-                            case scaleDir.ScaleX:
-                                x = initialScaleDir * stretchFactor;
-                                y = objects.transform.parent.localScale.y;
-                                z = objects.transform.parent.localScale.z;
-                                break;
-                            case scaleDir.ScaleY:
-                                y = initialScaleDir * stretchFactor;
-                                x = objects.transform.parent.localScale.x;
-                                z = objects.transform.parent.localScale.z;
-                                break;
-                            case scaleDir.ScaleZ:
-                                z = initialScaleDir * stretchFactor;
-                                x = objects.transform.parent.localScale.x;
-                                y = objects.transform.parent.localScale.y;
-                                break;
+                            x = initialScaleDirX * stretchFactor;
+                        }
+                        if (stretch_y)
+                        {
+                            y = initialScaleDirY * stretchFactor;
+                        }
+                        if (stretch_z)
+                        {
+                            z = initialScaleDirZ * stretchFactor;
                         }
 
                         objects.transform.parent.localScale = new Vector3(x, y, z);
@@ -555,62 +572,72 @@ public class UI_Manipulation_Script : MonoBehaviour
         }
     }
 
-    // methods for the buttons
+    // methods for the three different stretch buttons
     public void StretchX_Click()
     {
-        stretch_x = true;
-        stretch_y = false;
-        stretch_z = false;
+        stretch_x = !stretch_x;
 
         // change colour of the button
         ColorUtility.TryParseHtmlString("#B3F2E5", out Color myColor);
 
-        stretchButtons[0].image.color = myColor;
-        stretchButtons[1].image.color = Color.white;
-        stretchButtons[2].image.color = Color.white;
+        if (stretch_x)
+        {
+            stretchButtons[0].image.color = myColor;
+        }
+        else
+        {
+            stretchButtons[0].image.color = Color.white;
+        }
+
     }
 
     public void StretchY_Click()
     {
-        stretch_x = false;
-        stretch_y = true;
-        stretch_z = false;
+        stretch_y = !stretch_y;
 
         // change colour of the button
         ColorUtility.TryParseHtmlString("#B3F2E5", out Color myColor);
 
-        stretchButtons[0].image.color = Color.white;
-        stretchButtons[1].image.color = myColor;
-        stretchButtons[2].image.color = Color.white;
+        if (stretch_y)
+        {
+            stretchButtons[1].image.color = myColor;
+        }
+        else
+        {
+            stretchButtons[1].image.color = Color.white;
+        }
     }
 
     public void StretchZ_Click()
     {
-        stretch_x = false;
-        stretch_y = false;
-        stretch_z = true;
+        stretch_z = !stretch_z;
 
         // change colour of the button
         ColorUtility.TryParseHtmlString("#B3F2E5", out Color myColor);
 
-        stretchButtons[0].image.color = Color.white;
-        stretchButtons[1].image.color = Color.white;
-        stretchButtons[2].image.color = myColor;
+        if (stretch_z)
+        {
+            stretchButtons[2].image.color = myColor;
+        }
+        else
+        {
+            stretchButtons[2].image.color = Color.white;
+        }
     }
 
-    public void Color_Click()
+    public void Colour_Click()
     {
         // if the user moved the objects around before
         removeObjectsFromCamera();
         movement = false;
 
+        // deactivate the function of the control pad
         controlPadIsNotActive = false;
         setControlPadBoolsOnFalse();
 
         currentState = manipulationStates.Color;
         
         highlightIcon();
-
 
         activateGameObjects(new GameObject[] {uiColor});
     }
@@ -622,93 +649,98 @@ public class UI_Manipulation_Script : MonoBehaviour
         removeObjectsFromCamera();
         movement = false;
 
+        // deactivate the function of the control pad
         controlPadIsNotActive = false;
         setControlPadBoolsOnFalse();
 
-        
         currentState = manipulationStates.Copy;
 
         highlightIcon();
 
+        // deactivate everything
         activateGameObjects(new GameObject[] {null});
+
+        /*
+         * This foreach loop is the main copying function in this method
+         */
 
         ArrayList copyObjects = new ArrayList();
         foreach (GameObject objects in listOfMarkedObjects)
         {
-            GameObject copied = null;
+            // Instantiates a certain cloned Stage
+            GameObject copiedStage = null;
             if (objects.name.Contains("Cube"))
             {
-                copied = Instantiate(clonedStages[0]);
+                copiedStage = Instantiate(clonedStages[0]);
             }
             else if (objects.name.Contains("Cylinder"))
             {
-                copied = Instantiate(clonedStages[1]);
+                copiedStage = Instantiate(clonedStages[1]);
             }
             else if (objects.name.Contains("Sphere"))
             {
-                copied = Instantiate(clonedStages[2]);
+                copiedStage = Instantiate(clonedStages[2]);
             }
             else if (objects.name.Contains("Capsule"))
             {
-                copied = Instantiate(clonedStages[3]);
+                copiedStage = Instantiate(clonedStages[3]);
             }
             else if (objects.name.Contains("Pyramid"))
             {
-                copied = Instantiate(clonedStages[4]);
+                copiedStage = Instantiate(clonedStages[4]);
             }
             else if (objects.name.Contains("Cone"))
             {
-                copied = Instantiate(clonedStages[5]);
+                copiedStage = Instantiate(clonedStages[5]);
             }
             else if (objects.name.Contains("Hemisphere"))
             {
-                copied = Instantiate(clonedStages[6]);
+                copiedStage = Instantiate(clonedStages[6]);
             }
             else if (objects.name.Contains("Tube"))
             {
-                copied = Instantiate(clonedStages[7]);
+                copiedStage = Instantiate(clonedStages[7]);
             }
             else if (objects.name.Contains("Ring"))
             {
-                copied = Instantiate(clonedStages[8]);
+                copiedStage = Instantiate(clonedStages[8]);
             }
             else if (objects.name.Contains("Prism"))
             {
-                copied = Instantiate(clonedStages[9]);
+                copiedStage = Instantiate(clonedStages[9]);
             }
 
 
-            // copy position
-            copied.transform.GetChild(0).position = new Vector3(objects.transform.parent.position.x, 
+            // copy the position for the child (the parent of the main object) of the copied stage
+            copiedStage.transform.GetChild(0).position = new Vector3(objects.transform.parent.position.x, 
                                         objects.transform.parent.position.y, objects.transform.parent.position.z);
 
-            // copy rotation
+            // copy the rotation for the main object of the copied stage
             Vector3 rotation = objects.transform.eulerAngles;
-            copied.transform.GetChild(0).GetChild(0).transform.eulerAngles = rotation;
+            copiedStage.transform.GetChild(0).GetChild(0).transform.eulerAngles = rotation;
 
 
-            // copy scale
-            copied.transform.GetChild(0).transform.localScale = new Vector3(objects.transform.parent.localScale.x, objects.transform.parent.localScale.y, objects.transform.parent.localScale.z);
+            // copy the scale for the child (the parent of the main object) of the copied stage
+            copiedStage.transform.GetChild(0).transform.localScale = new Vector3(objects.transform.parent.localScale.x, objects.transform.parent.localScale.y, objects.transform.parent.localScale.z);
 
-            // copy colour
+            // copy the colour for the main object of the copied stage
             float r = objects.GetComponent<MeshRenderer>().material.color.r;
             float g = objects.GetComponent<MeshRenderer>().material.color.g;
             float b = objects.GetComponent<MeshRenderer>().material.color.b;
             float a = objects.GetComponent<MeshRenderer>().material.color.a;
 
-            copied.transform.GetChild(0).GetChild(0).GetComponent<Renderer>().material.SetColor("_Color", new Color(r, g, b, a));
+            copiedStage.transform.GetChild(0).GetChild(0).GetComponent<Renderer>().material.SetColor("_Color", new Color(r, g, b, a));
 
 
-            // get the outline
-            var outline = copied.transform.GetChild(0).GetChild(0).GetComponent<Outline>();
+            // get and then set the outline
+            var outline = copiedStage.transform.GetChild(0).GetChild(0).GetComponent<Outline>();
 
             outline.OutlineMode = Outline.Mode.OutlineAll;
             outline.OutlineColor = new Color(1-r, 1-g, 1-b, 1);
             outline.OutlineWidth = 7f;
 
-
-            copyObjects.Add(copied.transform.GetChild(0).GetChild(0).gameObject);
-
+            // add the main copied objects to an ArrayList
+            copyObjects.Add(copiedStage.transform.GetChild(0).GetChild(0).gameObject);
         }
 
         // there is no outline after you enter the selectionmode
@@ -722,9 +754,11 @@ public class UI_Manipulation_Script : MonoBehaviour
 
         }
 
+        // clear the dynamic Lists
         listOfMarkedObjects.Clear();
         objectsStages.Clear();
 
+        // add the copied objects to marked objects
         foreach (GameObject copies in copyObjects)
         {
             listOfMarkedObjects.Add(copies);
@@ -732,9 +766,14 @@ public class UI_Manipulation_Script : MonoBehaviour
             copies.transform.parent.parent = camera.transform;
         }
     
-
+        // after copying: you can now move the copied object
         ButtonMove_Click();  
     }
+
+    /*
+     * All following methods are for changing the variables 
+     * for the control pad.
+     */
 
     public void setControlPadBoolsOnFalse()
     {

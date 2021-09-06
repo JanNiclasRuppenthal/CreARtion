@@ -1,14 +1,21 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
-using UnityEngine.EventSystems;
 using Vuforia;
-using System.IO;
-using System;
 
 
+/* This class contains all the functions for the Selectionmode
+ * Variables:
+ *      - the UI of Selection- and Manipulationmode
+ *      - stages and positioners
+ *      - 
+ *  Methods:
+ *      - set initial stages
+ *      - set and reset highlights of the icons
+ *      - take screenshots
+ *      - methods for the buttons to change the stages
+ */
 public class UI_Selection_Script : MonoBehaviour
 { 
 
@@ -18,28 +25,13 @@ public class UI_Selection_Script : MonoBehaviour
 
     public GameObject listStagesPositioners;
 
-    // variables for screenshots
-    private int number;
-    private int screenshotTimer = 0;
-    private int videocapturingTimerSeconds = 0;
-    private int videocapturingTimerMinutes = 0;
-
 
     // Video Button  
     public Button buttonVideocapture;
     public Sprite stop_sprite;
     public Sprite record_sprite;
-    private bool vflag = false;
-
-
 
     public Text helpfulInformations;
-
-    /*
-    * Basic Idea is that you disable and enable
-    * the mid air stage AND the positioner 
-    * of the related object
-    */
 
     // List of stages and positioners
     public int size = 10;
@@ -73,7 +65,6 @@ public class UI_Selection_Script : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
         // enable cube stage and positioner as default
         setStageAndPositioner(0);
 
@@ -84,12 +75,6 @@ public class UI_Selection_Script : MonoBehaviour
 
         enumObjects = Objects.Cube;
 
-        // save the number of shots
-        if (!PlayerPrefs.HasKey("numberOfShots"))
-        {
-            PlayerPrefs.SetInt("numberOfShots", 0);
-        }
-
         // Highlight Cube Icon
         ColorUtility.TryParseHtmlString("#B3F2E5", out Color myColor);
         formIcons[0].image.color = myColor;
@@ -98,19 +83,34 @@ public class UI_Selection_Script : MonoBehaviour
 
     private void Update()
     {
-        // Touching the Objects
+        
+        if ((Input.touchCount > 0 && Input.touches[0].phase == TouchPhase.Began))
+        {
+            setInitialStage();
+        }
+
+
+#if UNITY_EDITOR
         if (Input.GetMouseButton(0))
         {
-            setStage();
+            setInitialStage();
         }
-        else if ((Input.touchCount > 0 && Input.touches[0].phase == TouchPhase.Began))
-        {
-            setStage();
-        }
+#endif
     }
 
-
-    private void setStage()
+    /* 
+     * This method will be called, after every touch on the touchscreen.
+     * The idea:
+     * Without this method, Vuforia just places the last objects.
+     * 
+     * For example: If you coloured a cube and then you want to place a cube again.
+     * This cube will be blue again.
+     * Another example: If you delete the last placed cube, you are not able to place a cube again, 
+     * because the last one is destroyed.
+     * 
+     * This method assign the initial stage to the positioner.
+     */
+    private void setInitialStage()
     {
        
         switch (enumObjects)
@@ -205,8 +205,11 @@ public class UI_Selection_Script : MonoBehaviour
     }
 
 
-    // set one stage and positioner as active
-    // and disable all other stages and positioners
+    /*
+    * Basic Idea is that you disable all other objects and enable
+    * the mid air stage AND the positioner 
+    * of the related object
+    */
     private void setStageAndPositioner(int index)
     {
         for (int i = 0; i < stageAndPositioners.Length; i++)
@@ -222,14 +225,11 @@ public class UI_Selection_Script : MonoBehaviour
         }
     }
 
-
+    /* The method for the screenshot button:
+     * It starts a coroutine takeScreenshot()
+     */
     public void ButtonScreenshot_Click()
     {
-        // center the position of the text
-
-        // new text
-        helpfulInformations.text = "Screenshot taken in " + (3 - screenshotTimer);
-
         // call function
         StartCoroutine("takeScreenshot");
     }
@@ -238,19 +238,18 @@ public class UI_Selection_Script : MonoBehaviour
     {
         
         // disable the uiSelectionmode
-        // capture a screenshot
-        // enable the uiSelectionmode
         uiSelectionmode.SetActive(false);
         listStagesPositioners.SetActive(false);
 
 
-            
+        // capture a screenshot
         string timeStamp = System.DateTime.Now.ToString("dd-MM-yyyy-HH-mm-ss");
         string fileName = "CreARtion Screenshot" + timeStamp + ".png";
         string pathToSave = fileName;
         ScreenCapture.CaptureScreenshot(pathToSave);
-                
 
+
+        // enable the uiSelectionmode
         Invoke("enableSelectionmode", 0.1f);
 
         // new text

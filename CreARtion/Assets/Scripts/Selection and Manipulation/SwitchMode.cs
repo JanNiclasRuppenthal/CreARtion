@@ -1,14 +1,21 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using Vuforia;
-using Object = UnityEngine.Object;
 
+/*
+ * This class implements the function to switch between
+ * manipulationmode and selectionmode.
+ * Methods:
+ *		- switch to selectionmode
+ *		- switch to manipulationmode
+ *		- mark objects
+ *		- delete several or all stages
+ *		- acitvate one certain UI element
+ */
 public class SwitchMode : MonoBehaviour
 {
-
+	// all UI GameObjects
 	public GameObject listStagesPositioners;
 	public GameObject uiSelectionmode;
 	public GameObject uiManipulationmode;
@@ -24,11 +31,12 @@ public class SwitchMode : MonoBehaviour
 
 	public UI_Manipulation_Script ui_Manipulation_Script;
 
-	
+	// a variable to save the current marked object
 	private GameObject baseObject;
 
 	private HashSet<GameObject> listOfMarkedObjects = new HashSet<GameObject>();
 
+	// a dictionary of a marked object and their Mid Air Stage
 	private Dictionary<GameObject, Transform> dictObjectStage = new Dictionary<GameObject, Transform>();
 
 
@@ -55,10 +63,12 @@ public class SwitchMode : MonoBehaviour
 
         if (ui_Manipulation_Script.currentState != UI_Manipulation_Script.manipulationStates.Select)
         {
-            // do NOT detect a gameobject in the scene
+			// do NOT detect a gameobject in the scene
+			return;
         }
 
-        if (Input.touchCount > 0 && Input.touches[0].phase == TouchPhase.Began /*&& Time.time > cooldown*/)
+		// Tuching Objects
+        if (Input.touchCount > 0 && Input.touches[0].phase == TouchPhase.Began)
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.GetTouch(0).position);
 
@@ -69,15 +79,13 @@ public class SwitchMode : MonoBehaviour
                 return;
             }
 
-            //cooldown = Time.time + timeDelay;
-
             markObjects(ray);
         }
 
 
         // Touching Objects
 #if UNITY_EDITOR
-        if (Input.GetMouseButton(0) /*&& Time.time > cooldown*/)
+        if (Input.GetMouseButton(0))
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
@@ -88,67 +96,38 @@ public class SwitchMode : MonoBehaviour
                 return;
             }
 
-            //cooldown = Time.time + timeDelay;
-
             markObjects(ray);
         }
 #endif
     }
 
-    public void OnPointerDown(PointerEventData eventData)
-    {
-        Debug.Log("Hier");
-        if (ui_Manipulation_Script.currentState != UI_Manipulation_Script.manipulationStates.Select)
-        {
-            // do NOT detect a gameobject in the scene
-        }
-
-        Ray ray = Camera.main.ScreenPointToRay(Input.GetTouch(0).position);
-
-        // behind the list
-        // Check if the mouse was clicked over a UI element
-        if (EventSystem.current.IsPointerOverGameObject())
-        {
-            return;
-        }
-
-        //cooldown = Time.time + timeDelay;
-
-        markObjects(ray);
-    }
-
-
-
-    /*
-	 * This method is called several times because of the update() function.
-	 * It will be called every frame.
-	 * That is the reason why objects are copied several times. 
-	 * The ArrayList had several instances of the same object.
-	 */
-    private void markObjects(Ray ray)
+	/*
+     *  A method to mark the objects with a Raycast.
+     *  save the object and stage in the HashSet and Dictionary.
+     *  Every marked object gets an outline
+     */
+	private void markObjects(Ray ray)
     {
 
 		// look for Hit
 		RaycastHit hit = new RaycastHit();
 		if (Physics.Raycast(ray, out hit))
 		{
-
 			// Deactivate all Stages and Positioners
 			// Your are not able to place an object anymore
 			switchToManipulationmode();
 
-
-			var outline = hit.collider.gameObject.GetComponent<Outline>();
-
 			// save the object
 			baseObject = hit.collider.gameObject;
 
-			// if the object is already in the list, do not add it to the ArrayList
+			var outline = baseObject.GetComponent<Outline>();
+
+
+			// if the object is already in the list, do not add it to the HashSet again
 			foreach (GameObject markedObjects in listOfMarkedObjects)
             {
 				if (markedObjects == baseObject)
 				{ 
-
 					return;
                 }
             }
@@ -179,8 +158,8 @@ public class SwitchMode : MonoBehaviour
 		}
 	}
 
-
-	public void activateGameObjects(GameObject gameObject)
+	// deactivate all UI elements except the parameter
+	private void activateGameObjects(GameObject gameObject)
     {
 		foreach (GameObject ui in listUI)
 		{
@@ -201,7 +180,7 @@ public class SwitchMode : MonoBehaviour
 		// activate stages and positioner and the ui of the selectionmode
 		listStagesPositioners.SetActive(true);
 
-		// disable the manipulationmode and the UIs of the manipulationstools
+		// disable the manipulationmode and the UIs of the manipulationtools
 		activateGameObjects(uiSelectionmode);
 
 
@@ -223,46 +202,43 @@ public class SwitchMode : MonoBehaviour
 		// reset Icon Highlighting
 		ui_Manipulation_Script.resetIconHighlighting();
 
+		// clear the HashSet and the Dictionary
 		listOfMarkedObjects.Clear();
 		dictObjectStage.Clear();
 
 		// no current state of a manipualtion mode
 		ui_Manipulation_Script.currentState = UI_Manipulation_Script.manipulationStates.Select;
-
 	}
 
-	// There is no button which call this function
-	// Thats why it is private
+	// A method to switch to the manipulation mode
 	private void switchToManipulationmode()
 	{
 		// deactivate stages and positioner and the ui of the selectionmode
 		listStagesPositioners.SetActive(false);
 		activateGameObjects(uiManipulationmode);
 
+		// setup the manipulationmode
 		ui_Manipulation_Script.setControlPadBoolsOnFalse();
-
 		ui_Manipulation_Script.highlightIcon();
-
 		ui_Manipulation_Script.ButtonSelect_Click();
-
 	}
 
-
+	// a method for the delete button
+	// It destroys the stages from the HashSet listOfMarkedObjects
 	public void deleteButton_OnClick()
     {
 		// if the user moved the objects around before
 		ui_Manipulation_Script.removeObjectsFromCamera();
 
-		// destroy object
-
-		ArrayList listIndex = new ArrayList();
+		// a teporary HashSet
+		HashSet<GameObject> listIndex = new HashSet<GameObject>();
 		foreach (GameObject item in listOfMarkedObjects)
 		{
 			GameObject temp = item.transform.parent.parent.gameObject;
+			// destroy Mid Air Stage
 			Destroy(temp);
 
 			listIndex.Add(item);
-
 		}
 
 		foreach (GameObject item in listIndex)
@@ -278,18 +254,18 @@ public class SwitchMode : MonoBehaviour
 		// switch to the selectionmode
 		switchToSelectionmode();
     }
-	
+
+	// a method for the delete ALL button
+	// It destroys the stages with a tag
 	public void clearAllButton_OnClick()
 	{
 		// if the user moved the objects around before
 		ui_Manipulation_Script.removeObjectsFromCamera();
 
-		
-
-		// destroy all placed objects
+		// destroy all placed objects and their Mid Air Stages
+		// Every Stage has a Tag "MidAirStage"
 		foreach (GameObject item in GameObject.FindGameObjectsWithTag("MidAirStage"))
 		{
-			//GameObject temp = item.transform.parent.parent.gameObject;
 			Destroy(item);
 		}
 
@@ -302,6 +278,7 @@ public class SwitchMode : MonoBehaviour
 		// switch to the selectionmode
 		switchToSelectionmode();
 	}
+
 
 	// Getter
 	public HashSet<GameObject> getListOfMarkedObjects(){
