@@ -32,7 +32,6 @@ public class UI_Manipulation_Script : MonoBehaviour
     // ArrayList of all UI GameObjects
     private ArrayList listUI = new ArrayList();
 
-
     //Rotation-UI
     public GameObject uiRotation;
     
@@ -208,22 +207,6 @@ public class UI_Manipulation_Script : MonoBehaviour
                 objects.transform.parent.position = new Vector3(pos.x, pos.y, pos.z - speed);
             }
         }
-        if (rotate_right)
-        {
-            foreach (GameObject objects in listOfMarkedObjects)
-            {
-                Vector3 v = objects.transform.eulerAngles;
-                objects.transform.eulerAngles = new Vector3(v.x, v.y + speed*100, v.z);
-            }
-        }
-        if (rotate_left)
-        {
-            foreach (GameObject objects in listOfMarkedObjects)
-            {
-                Vector3 v = objects.transform.eulerAngles;
-                objects.transform.eulerAngles = new Vector3(v.x, v.y - speed*100 , v.z);
-            }
-        }
     }
 
     
@@ -234,32 +217,8 @@ public class UI_Manipulation_Script : MonoBehaviour
         
         // Select a Color
         ColorUtility.TryParseHtmlString("#B3F2E5", out Color myColor);
-        
-        switch (currentState)
-        {
-            case manipulationStates.Select:
-                mIcons[0].image.color = myColor;
-                break;
-            case manipulationStates.Move:
-                mIcons[1].image.color = myColor;
-                break;
-            case manipulationStates.Resize:
-                mIcons[2].image.color = myColor;
-                break;
-            case manipulationStates.Rotate:
-                mIcons[3].image.color = myColor;
-                break;
-            case manipulationStates.Stretch:
-                mIcons[4].image.color = myColor;
-                break;
-            case manipulationStates.Color:
-                mIcons[5].image.color = myColor;
-                break;
-            case manipulationStates.Copy:
-                mIcons[6].image.color = myColor;
-                break;
-            default: break;
-        }
+
+        mIcons[(int) currentState].image.color = myColor;
     }
 
     public void resetIconHighlighting()

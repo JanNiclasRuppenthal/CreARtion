@@ -31,6 +31,9 @@ public class SwitchMode : MonoBehaviour
 
 	public UI_Manipulation_Script ui_Manipulation_Script;
 
+	// Feedback after deleting objects
+	public GameObject particleSystem;
+
 	// a variable to save the current marked object
 	private GameObject baseObject;
 
@@ -235,8 +238,22 @@ public class SwitchMode : MonoBehaviour
 		foreach (GameObject item in listOfMarkedObjects)
 		{
 			GameObject temp = item.transform.parent.parent.gameObject;
-			// destroy Mid Air Stage
+
+			// get the same position and colour
+			item.GetComponent<MeshRenderer>().enabled = false;
+			item.GetComponent<Collider>().enabled = false;
+			GameObject instantiatedParticleSystem = Instantiate(particleSystem);
+
+			instantiatedParticleSystem.transform.position = item.transform.parent.position;
+			instantiatedParticleSystem.GetComponent<ParticleSystem>().startColor = item.GetComponent<MeshRenderer>().material.color;
+
+			// play ParticleSystem
+			instantiatedParticleSystem.GetComponent<ParticleSystem>().Play();
+
+			// destroy ParticleSystem and Mid Air Stage
+			Destroy(instantiatedParticleSystem, 1);
 			Destroy(temp);
+			
 
 			listIndex.Add(item);
 		}
@@ -266,6 +283,20 @@ public class SwitchMode : MonoBehaviour
 		// Every Stage has a Tag "MidAirStage"
 		foreach (GameObject item in GameObject.FindGameObjectsWithTag("MidAirStage"))
 		{
+			// get the same position and colour
+			Transform mainObject = item.transform.GetChild(0).GetChild(0);
+			mainObject.GetComponent<MeshRenderer>().enabled = false;
+			mainObject.GetComponent<Collider>().enabled = false;
+			GameObject instantiatedParticleSystem = Instantiate(particleSystem);
+
+			instantiatedParticleSystem.transform.position = mainObject.parent.position;
+			instantiatedParticleSystem.GetComponent<ParticleSystem>().startColor = mainObject.GetComponent<MeshRenderer>().material.color;
+
+			// play ParticleSystem
+			instantiatedParticleSystem.GetComponent<ParticleSystem>().Play();
+
+			// destroy ParticleSystem and Mid Air Stage
+			Destroy(instantiatedParticleSystem, 1);
 			Destroy(item);
 		}
 
@@ -279,9 +310,8 @@ public class SwitchMode : MonoBehaviour
 		switchToSelectionmode();
 	}
 
-
-	// Getter
-	public HashSet<GameObject> getListOfMarkedObjects(){
+    // Getter
+    public HashSet<GameObject> getListOfMarkedObjects(){
 		return listOfMarkedObjects;
 	}
 

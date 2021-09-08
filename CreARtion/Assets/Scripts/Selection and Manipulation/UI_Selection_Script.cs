@@ -9,7 +9,6 @@ using Vuforia;
  * Variables:
  *      - the UI of Selection- and Manipulationmode
  *      - stages and positioners
- *      - 
  *  Methods:
  *      - set initial stages
  *      - set and reset highlights of the icons
@@ -112,42 +111,10 @@ public class UI_Selection_Script : MonoBehaviour
      */
     private void setInitialStage()
     {
-       
-        switch (enumObjects)
-        {
-            case Objects.Cube:
-                positioner[0].AnchorStage = stages[0];
-                break;
-            case Objects.Cylinder:
-                positioner[1].AnchorStage = stages[1];
-                break;
-            case Objects.Sphere:
-                positioner[2].AnchorStage = stages[2];
-                break;
-            case Objects.Capsule:
-                positioner[3].AnchorStage = stages[3];
-                break;
-            case Objects.Pyramid:
-                positioner[4].AnchorStage = stages[4];
-                break;
-            case Objects.Cone:
-                positioner[5].AnchorStage = stages[5];
-                break;
-            case Objects.Hemisphere:
-                positioner[6].AnchorStage = stages[6];
-                break;
-            case Objects.Tube:
-                positioner[7].AnchorStage = stages[7];
-                break;
-            case Objects.Ring:
-                positioner[8].AnchorStage = stages[8];
-                break;
-            case Objects.Prism:
-                positioner[9].AnchorStage = stages[9];
-                break;
 
-            default: break;
-        }
+        positioner[(int) enumObjects].AnchorStage = stages[(int)enumObjects];
+
+        
     }
     
     // Highlight selected Icon
@@ -156,44 +123,8 @@ public class UI_Selection_Script : MonoBehaviour
         resetIconHighlighting();
         
         ColorUtility.TryParseHtmlString("#B3F2E5", out Color myColor);
-        
-        switch (enumObjects)
-        {
-            case Objects.Cube:
-                formIcons[0].image.color = myColor;
-                break;
-            case Objects.Cylinder:
-                formIcons[1].image.color = myColor;
-                break;
-            case Objects.Sphere:
-                formIcons[2].image.color = myColor;
-                break;
-            case Objects.Capsule:
-                formIcons[3].image.color = myColor;
-                break;
-            case Objects.Pyramid:
-                formIcons[4].image.color = myColor;
-                break;
-            case Objects.Cone:
-                formIcons[5].image.color = myColor;
-                break;
-            case Objects.Hemisphere:
-                formIcons[6].image.color = myColor;
-                break;
-            case Objects.Tube:
-                formIcons[7].image.color = myColor;
-                break;
-            case Objects.Ring:
-                formIcons[8].image.color = myColor;
-                break;
-            case Objects.Prism:
-                formIcons[9].image.color = myColor;
-                break;
-            case Objects.None:
-                formIcons[10].image.color = myColor;
-                break;
-            default: break;
-        }
+
+        formIcons[(int) enumObjects].image.color = myColor;
     }
 
     public void resetIconHighlighting()
