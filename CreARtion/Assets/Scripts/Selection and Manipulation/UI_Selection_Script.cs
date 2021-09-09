@@ -30,7 +30,10 @@ public class UI_Selection_Script : MonoBehaviour
     public Sprite stop_sprite;
     public Sprite record_sprite;
 
+    private bool helpIsActivated;
+    public GameObject TextContainer;
     public Text helpfulInformations;
+    public GameObject TapToPlace;
 
     // List of stages and positioners
     public int size = 10;
@@ -64,6 +67,8 @@ public class UI_Selection_Script : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        loadAndSetHelp();
+        
         // enable cube stage and positioner as default
         setStageAndPositioner(0);
 
@@ -354,6 +359,13 @@ public class UI_Selection_Script : MonoBehaviour
         // change the text to the information how to place objects
         helpfulInformations.text = "Tap to place " + enumObjects.ToString() + ".\nOr tap on object to manipulate.";
     }
-
     
+    // this method enables or disables help and hints
+    private void loadAndSetHelp()
+    {
+        helpIsActivated = (PlayerPrefs.GetInt("help") != 0);
+
+        TextContainer.SetActive(helpIsActivated);
+        TapToPlace.SetActive(helpIsActivated);
+    }
 }

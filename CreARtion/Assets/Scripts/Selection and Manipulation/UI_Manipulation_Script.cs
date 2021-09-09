@@ -22,6 +22,8 @@ public class UI_Manipulation_Script : MonoBehaviour
 {
     // main UI of the manipulationmode
     public GameObject uiManipulationmode;
+    private bool helpIsActivated;
+    public GameObject StretchTextContainer;
     public GameObject TextContainer;
     public Text helpfulInformations;
     public GameObject scrollableListManipulations;
@@ -81,7 +83,6 @@ public class UI_Manipulation_Script : MonoBehaviour
     public GameObject controlPad;
     public GameObject switchMoveControl;
     private bool controlPadIsNotActive = false;
-    public Button buttonSwitchMoveControl;
     public Sprite controlPad_sprite;
     public Sprite phone_sprite;
 
@@ -132,7 +133,7 @@ public class UI_Manipulation_Script : MonoBehaviour
         highlightIcon();
 
         // set a helpfull text
-        TextContainer.SetActive(true);
+        loadAndSetHelp();
         helpfulInformations.text = "Tap on the objects to select them.";
 
     }
@@ -208,6 +209,14 @@ public class UI_Manipulation_Script : MonoBehaviour
             }
         }
     }
+    
+    // this method enables or disables help and hints
+    private void loadAndSetHelp()
+    {
+        helpIsActivated = (PlayerPrefs.GetInt("help") != 0);
+        
+        TextContainer.SetActive(helpIsActivated);
+    }
 
     
     // Highlight selected Icon
@@ -245,6 +254,13 @@ public class UI_Manipulation_Script : MonoBehaviour
                 }
             }
 
+            // check if TextContainer is necessary
+            if (ui.name == "TextContainer" && !helpIsActivated)
+            {
+                skip = false;
+                continue;
+            }
+            
             // activate, if we found the right element
             if (skip)
             {
@@ -291,7 +307,8 @@ public class UI_Manipulation_Script : MonoBehaviour
 
         // deactivate the function of the control pad
         controlPadIsNotActive = false;
-        buttonSwitchMoveControl.image.overrideSprite = controlPad_sprite;
+        switchMoveControl.GetComponent<Button>().image.overrideSprite = controlPad_sprite;
+        //buttonSwitchMoveControl.image.overrideSprite = controlPad_sprite;
         setControlPadBoolsOnFalse();
 
         highlightIcon();
@@ -330,22 +347,24 @@ public class UI_Manipulation_Script : MonoBehaviour
         if (controlPadIsNotActive)
         {
             // change the UI
-            activateGameObjects(new GameObject[] {moveUI, TextContainer});
+            activateGameObjects(new GameObject[] {moveUI, TextContainer, switchMoveControl});
 
             // change the image
-            buttonSwitchMoveControl.image.overrideSprite = controlPad_sprite;
+            //buttonSwitchMoveControl.image.overrideSprite = controlPad_sprite;
+            switchMoveControl.GetComponent<Button>().image.overrideSprite = controlPad_sprite;
         }
         else
         {
             // change the UI
-            activateGameObjects(new GameObject[] { controlPad });
+            activateGameObjects(new GameObject[] { controlPad, switchMoveControl });
 
             // if the user moved the objects around before
             removeObjectsFromCamera();
             movement = false;
 
             // change the image
-            buttonSwitchMoveControl.image.overrideSprite = phone_sprite;
+            //buttonSwitchMoveControl.image.overrideSprite = phone_sprite;
+            switchMoveControl.GetComponent<Button>().image.overrideSprite = phone_sprite;
         }
         
         controlPadIsNotActive = !controlPadIsNotActive;
@@ -465,7 +484,9 @@ public class UI_Manipulation_Script : MonoBehaviour
         stretchButtons[2].image.color = Color.white;
 
         activateGameObjects(new GameObject[] {uiListStretchButtons});
-
+        
+        // enable or disable help text
+        StretchTextContainer.SetActive(helpIsActivated);
     }
 
 

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
@@ -16,6 +17,16 @@ public class MainMenu_Script : MonoBehaviour
     // In this link are the images of the ImageTargets, so that everybody can download them.
     private string url = "https://www.dropbox.com/sh/4takb350i80cplm/AADP4ZQDYn7RJqRzyyGyeWnra?dl=0";
     public Text warn;
+    
+    // We want to check, if people activated the hints
+    static bool helpIsActivated;
+    public GameObject toggler;
+
+    private void Start()
+    {
+        // Check if user activated help in last session
+        toggler.GetComponent<Toggle>().isOn = (PlayerPrefs.GetInt("help") != 0);
+    }
 
     /*
      * These functions are for the buttons.
@@ -46,5 +57,13 @@ public class MainMenu_Script : MonoBehaviour
         warn.text = "";
         Application.OpenURL(url);
         
+    }
+    
+    // change if help and hints are activated
+    public void toggleHelp(bool tog)
+    {
+        // save it to disk, to save it for next session
+        PlayerPrefs.SetInt("help", (tog ? 1 : 0));
+        PlayerPrefs.Save();
     }
 }
