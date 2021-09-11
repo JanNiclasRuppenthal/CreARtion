@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
@@ -19,11 +18,18 @@ public class MainMenu_Script : MonoBehaviour
     public Text warn;
     
     // We want to check, if people activated the hints
-    static bool helpIsActivated;
     public GameObject toggler;
 
     private void Start()
     {
+        // check if the user start this application for the first time
+        if (PlayerPrefs.GetInt("StartTheFirstTime") == 0)
+        {
+            PlayerPrefs.SetInt("StartTheFirstTime", 1);
+            PlayerPrefs.SetInt("help", 1);
+            PlayerPrefs.Save();
+        }
+
         // Check if user activated help in last session
         toggler.GetComponent<Toggle>().isOn = (PlayerPrefs.GetInt("help") != 0);
     }

@@ -2,6 +2,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using UnityEngine.EventSystems;
 using Vuforia;
 
 
@@ -15,7 +16,7 @@ using Vuforia;
  *      - take screenshots
  *      - methods for the buttons to change the stages
  */
-public class UI_Selection_Script : MonoBehaviour
+public class UI_Selection_Script : MonoBehaviour, IPointerDownHandler
 { 
 
     // two different uis
@@ -87,7 +88,7 @@ public class UI_Selection_Script : MonoBehaviour
 
     private void Update()
     {
-        
+
         if ((Input.touchCount > 0 && Input.touches[0].phase == TouchPhase.Began))
         {
             setInitialStage();
@@ -116,10 +117,12 @@ public class UI_Selection_Script : MonoBehaviour
      */
     private void setInitialStage()
     {
+        if (enumObjects == Objects.None)
+        {
+            return;
+        }
 
-        positioner[(int) enumObjects].AnchorStage = stages[(int)enumObjects];
-
-        
+        positioner[(int) enumObjects].AnchorStage = stages[(int) enumObjects];
     }
     
     // Highlight selected Icon
@@ -367,5 +370,10 @@ public class UI_Selection_Script : MonoBehaviour
 
         TextContainer.SetActive(helpIsActivated);
         TapToPlace.SetActive(helpIsActivated);
+    }
+
+    public void OnPointerDown(PointerEventData eventData)
+    {
+        Debug.Log("Something was clicked!!");
     }
 }

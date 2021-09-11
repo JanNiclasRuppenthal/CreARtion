@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 /*
  * This class implements all the function for the mainpulationtools.
@@ -20,6 +21,7 @@ using UnityEngine.UI;
  */
 public class UI_Manipulation_Script : MonoBehaviour
 {
+
     // main UI of the manipulationmode
     public GameObject uiManipulationmode;
     private bool helpIsActivated;
@@ -134,7 +136,7 @@ public class UI_Manipulation_Script : MonoBehaviour
 
         // set a helpfull text
         loadAndSetHelp();
-        helpfulInformations.text = "Tap on the objects to select them.";
+        helpfulInformations.text = "Tap on the objects to select or deselect.";
 
     }
 

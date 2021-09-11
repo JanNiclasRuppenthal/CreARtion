@@ -35,7 +35,7 @@ public class SwitchMode : MonoBehaviour
 	public GameObject particleSystem;
 
 	// a variable to save the current marked object
-	private GameObject baseObject;
+	//private GameObject baseObject;
 
 	private HashSet<GameObject> listOfMarkedObjects = new HashSet<GameObject>();
 
@@ -60,109 +60,81 @@ public class SwitchMode : MonoBehaviour
     }
 
 
-    // Update is called once per frame
-    void Update()
-    {
-
-        if (ui_Manipulation_Script.currentState != UI_Manipulation_Script.manipulationStates.Select)
-        {
-			// do NOT detect a gameobject in the scene
-			return;
-        }
-
-		// Tuching Objects
-        if (Input.touchCount > 0 && Input.touches[0].phase == TouchPhase.Began)
-        {
-            Ray ray = Camera.main.ScreenPointToRay(Input.GetTouch(0).position);
-
-            // behind the list
-            // Check if the mouse was clicked over a UI element
-            if (EventSystem.current.IsPointerOverGameObject())
-            {
-                return;
-            }
-
-            markObjects(ray);
-        }
-
-
-        // Touching Objects
-#if UNITY_EDITOR
-        if (Input.GetMouseButton(0))
-        {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-
-            // behind the list
-            // Check if the mouse was clicked over a UI element
-            if (EventSystem.current.IsPointerOverGameObject())
-            {
-                return;
-            }
-
-            markObjects(ray);
-        }
-#endif
-    }
-
-	/*
+    /*
      *  A method to mark the objects with a Raycast.
      *  save the object and stage in the HashSet and Dictionary.
      *  Every marked object gets an outline
      */
-	private void markObjects(Ray ray)
+    public void markObjects(GameObject baseObject)
     {
 
-		// look for Hit
-		RaycastHit hit = new RaycastHit();
-		if (Physics.Raycast(ray, out hit))
+		// Deactivate all Stages and Positioners
+		// Your are not able to place an object anymore
+		switchToManipulationmode();
+
+            
+		var outline = baseObject.GetComponent<Outline>();
+
+
+		// get the complementary colour as outline of this object
+		float r = 1 - baseObject.GetComponent<MeshRenderer>().material.color.r;
+		float g = 1 - baseObject.GetComponent<MeshRenderer>().material.color.g;
+		float b = 1 - baseObject.GetComponent<MeshRenderer>().material.color.b;
+
+		// set the new outline
+		outline.OutlineMode = Outline.Mode.OutlineAll;
+		outline.OutlineColor = new Color(r, g, b, 1);
+		outline.OutlineWidth = 7f;
+
+		// save the object in HashSet
+		listOfMarkedObjects.Add(baseObject);
+
+		// save object and stage in the dictionary
+		try
 		{
-			// Deactivate all Stages and Positioners
-			// Your are not able to place an object anymore
-			switchToManipulationmode();
-
-			// save the object
-			baseObject = hit.collider.gameObject;
-
-			var outline = baseObject.GetComponent<Outline>();
-
-
-			// if the object is already in the list, do not add it to the HashSet again
-			foreach (GameObject markedObjects in listOfMarkedObjects)
-            {
-				if (markedObjects == baseObject)
-				{ 
-					return;
-                }
-            }
-
-
-			// get the complementary colour as outline of this object
-			float r = 1 - baseObject.GetComponent<MeshRenderer>().material.color.r;
-			float g = 1 - baseObject.GetComponent<MeshRenderer>().material.color.g;
-			float b = 1 - baseObject.GetComponent<MeshRenderer>().material.color.b;
-
-			// set the new outline
-			outline.OutlineMode = Outline.Mode.OutlineAll;
-			outline.OutlineColor = new Color(r, g, b, 1);
-			outline.OutlineWidth = 7f;
-
-			// save the object in HashSet
-			listOfMarkedObjects.Add(baseObject);
-
-			// save object and stage in the dictionary
-			try
-			{
-				dictObjectStage.Add(baseObject, baseObject.transform.parent.parent);
-			}
-			catch
-            {
-				//ignore
-            }
+			dictObjectStage.Add(baseObject, baseObject.transform.parent.parent);
 		}
+		catch
+		{
+			//ignore
+		}
+    }
+
+	public void demarkObjects(GameObject baseObject)
+    {
+		
+		var outline = baseObject.GetComponent<Outline>();
+
+
+		// set the new outline
+		outline.OutlineMode = Outline.Mode.OutlineHidden;
+		outline.OutlineColor = new Color(0, 0, 0, 0);
+		outline.OutlineWidth = 0f;
+
+		// save the object in HashSet
+		listOfMarkedObjects.Remove(baseObject);
+
+		// save object and stage in the dictionary
+		try
+		{
+			dictObjectStage.Remove(baseObject);
+		}
+		catch
+		{
+			//ignore
+		}
+
+		// if nothing is marked, switch mode
+		if (listOfMarkedObjects.Count == 0)
+        {
+			// we need some time, because without it, it will detect a touch
+			// and this application places an object
+			Invoke("switchToSelectionmode", 0.01f);
+        }
 	}
 
-	// deactivate all UI elements except the parameter
-	private void activateGameObjects(GameObject gameObject)
+    // deactivate all UI elements except the parameter
+    private void activateGameObjects(GameObject gameObject)
     {
 		foreach (GameObject ui in listUI)
 		{
@@ -214,7 +186,7 @@ public class SwitchMode : MonoBehaviour
 	}
 
 	// A method to switch to the manipulation mode
-	private void switchToManipulationmode()
+	public void switchToManipulationmode()
 	{
 		// deactivate stages and positioner and the ui of the selectionmode
 		listStagesPositioners.SetActive(false);
@@ -242,16 +214,9 @@ public class SwitchMode : MonoBehaviour
 			// get the same position and colour
 			item.GetComponent<MeshRenderer>().enabled = false;
 			item.GetComponent<Collider>().enabled = false;
-			GameObject instantiatedParticleSystem = Instantiate(particleSystem);
 
-			instantiatedParticleSystem.transform.position = item.transform.parent.position;
-			instantiatedParticleSystem.GetComponent<ParticleSystem>().startColor = item.GetComponent<MeshRenderer>().material.color;
+			InstantiateParticleSystem(item.transform);
 
-			// play ParticleSystem
-			instantiatedParticleSystem.GetComponent<ParticleSystem>().Play();
-
-			// destroy ParticleSystem and Mid Air Stage
-			Destroy(instantiatedParticleSystem, 1);
 			Destroy(temp);
 			
 
@@ -287,16 +252,9 @@ public class SwitchMode : MonoBehaviour
 			Transform mainObject = item.transform.GetChild(0).GetChild(0);
 			mainObject.GetComponent<MeshRenderer>().enabled = false;
 			mainObject.GetComponent<Collider>().enabled = false;
-			GameObject instantiatedParticleSystem = Instantiate(particleSystem);
 
-			instantiatedParticleSystem.transform.position = mainObject.parent.position;
-			instantiatedParticleSystem.GetComponent<ParticleSystem>().startColor = mainObject.GetComponent<MeshRenderer>().material.color;
-
-			// play ParticleSystem
-			instantiatedParticleSystem.GetComponent<ParticleSystem>().Play();
-
-			// destroy ParticleSystem and Mid Air Stage
-			Destroy(instantiatedParticleSystem, 1);
+			InstantiateParticleSystem(mainObject);
+			
 			Destroy(item);
 		}
 
@@ -308,6 +266,22 @@ public class SwitchMode : MonoBehaviour
 		
 		// switch to the selectionmode
 		switchToSelectionmode();
+	}
+
+	private void InstantiateParticleSystem(Transform mainObject)
+    {
+		GameObject instantiatedParticleSystem = Instantiate(particleSystem);
+
+		// get the same position, colour and the mesh
+		instantiatedParticleSystem.transform.position = mainObject.parent.position;
+		instantiatedParticleSystem.GetComponent<ParticleSystem>().startColor = mainObject.GetComponent<MeshRenderer>().material.color;
+		instantiatedParticleSystem.GetComponent<ParticleSystem>().GetComponent<ParticleSystemRenderer>().mesh = mainObject.GetComponent<MeshFilter>().mesh;
+
+		// play ParticleSystem
+		instantiatedParticleSystem.GetComponent<ParticleSystem>().Play();
+
+		// destroy ParticleSystem and Mid Air Stage
+		Destroy(instantiatedParticleSystem, 1);
 	}
 
     // Getter
