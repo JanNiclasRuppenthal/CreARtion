@@ -143,7 +143,7 @@ public class UI_Manipulation_Script : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // TODO: better writing
+
         switch (currentState)
         {
             case manipulationStates.Move:

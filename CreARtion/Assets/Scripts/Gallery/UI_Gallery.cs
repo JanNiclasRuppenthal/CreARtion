@@ -20,6 +20,7 @@ public class UI_Gallery : MonoBehaviour
 	int whichScreenShotIsShown = 0;
 
 
+
 	void Start()
 	{
 		files = Directory.GetFiles(Application.persistentDataPath + "/", "*.png");
@@ -28,6 +29,7 @@ public class UI_Gallery : MonoBehaviour
 		{
 			GetPictureAndShowIt();
 		}
+
 	}
 
 	// get the path to the picture and show it
@@ -113,4 +115,5 @@ public class UI_Gallery : MonoBehaviour
     {
         SceneManager.LoadScene("MainMenu"); 
     }
+
 }

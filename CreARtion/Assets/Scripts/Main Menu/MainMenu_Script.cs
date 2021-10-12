@@ -20,6 +20,10 @@ public class MainMenu_Script : MonoBehaviour
     // We want to check, if people activated the hints
     public GameObject toggler;
 
+    // UI
+    public GameObject ui;
+
+
     private void Start()
     {
         // check if the user start this application for the first time
@@ -28,10 +32,12 @@ public class MainMenu_Script : MonoBehaviour
             PlayerPrefs.SetInt("StartTheFirstTime", 1);
             PlayerPrefs.SetInt("help", 1);
             PlayerPrefs.Save();
+
         }
 
         // Check if user activated help in last session
         toggler.GetComponent<Toggle>().isOn = (PlayerPrefs.GetInt("help") != 0);
+
     }
 
     /*
@@ -72,4 +78,5 @@ public class MainMenu_Script : MonoBehaviour
         PlayerPrefs.SetInt("help", (tog ? 1 : 0));
         PlayerPrefs.Save();
     }
+
 }
