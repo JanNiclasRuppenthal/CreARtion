@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using System.IO;
@@ -107,6 +108,28 @@ public class UI_Gallery : MonoBehaviour
 			if (whichScreenShotIsShown < 0)
 				whichScreenShotIsShown = files.Length - 1;
 			GetPictureAndShowIt();
+		}
+	}
+
+	// click on share button
+	public void ClickShare()
+	{
+		StartCoroutine(TakeSSAndShare());
+	}
+
+	// share current image
+	private IEnumerator TakeSSAndShare()
+	{
+		yield return new WaitForEndOfFrame();
+		
+		if (files.Length > 0)
+		{
+			string pathToFile = files[whichScreenShotIsShown];
+			
+			new NativeShare().AddFile( pathToFile )
+				.SetSubject( "My creation with CreARtion" ).SetText( "Look! I created this sculpture with the augmented reality app CreARtion." )
+				.SetCallback( ( result, shareTarget ) => Debug.Log( "Share result: " + result + ", selected app: " + shareTarget ) )
+				.Share();
 		}
 	}
 
