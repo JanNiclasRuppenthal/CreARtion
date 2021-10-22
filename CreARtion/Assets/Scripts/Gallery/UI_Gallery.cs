@@ -3,12 +3,15 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using System.IO;
+using UnityEngine.EventSystems;
 
 /* This class contains the logic of the scene "Gallery"
  * Methods:
  *		- show and delete picture
  *		- get next or previous picture
  *		- switch to the mainmenu
+ *		- share picture
+ *		- switch view of images
  */
 public class UI_Gallery : MonoBehaviour
 {
@@ -19,18 +22,21 @@ public class UI_Gallery : MonoBehaviour
 	Sprite defaultImage;
 	string[] files = null;
 	int whichScreenShotIsShown = 0;
-
-
-
+	public GameObject gridViewCanvas;
+	public GameObject uiGridView;
+	public GameObject uiImageView;
+	private bool isGridView;
+	public PopulateGrid PopulateGrid;
+	
 	void Start()
 	{
 		files = Directory.GetFiles(Application.persistentDataPath + "/", "*.png");
+		isGridView = true;
 
-		if (files.Length > 0)
+		if (files.Length <= 0)
 		{
-			GetPictureAndShowIt();
+			gridViewCanvas.GetComponent<Image>().sprite = defaultImage;
 		}
-
 	}
 
 	// get the path to the picture and show it
@@ -44,7 +50,7 @@ public class UI_Gallery : MonoBehaviour
 	}
 
 	// return the picture with the path
-	private Texture2D GetScreenshotImage(string filePath)
+	public Texture2D GetScreenshotImage(string filePath)
 	{
 		Texture2D texture = null;
 		byte[] fileBytes;
@@ -138,5 +144,24 @@ public class UI_Gallery : MonoBehaviour
     {
         SceneManager.LoadScene("MainMenu"); 
     }
+	
+	public void ClickImage(int indexOfImage)
+	{
+		whichScreenShotIsShown = indexOfImage;
+		GetPictureAndShowIt();
+		switchView();
+	}
 
+	public void switchView()
+	{
+		isGridView = !isGridView;
+		uiGridView.SetActive(isGridView);
+		uiImageView.SetActive(!isGridView);
+	}
+	
+	// Getter
+	public string[] getFiles()
+	{
+		return files;
+	}
 }
