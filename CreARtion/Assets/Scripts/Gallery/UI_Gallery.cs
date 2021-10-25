@@ -3,7 +3,6 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using System.IO;
-using UnityEngine.EventSystems;
 
 /* This class contains the logic of the scene "Gallery"
  * Methods:
@@ -27,16 +26,27 @@ public class UI_Gallery : MonoBehaviour
 	public GameObject uiImageView;
 	private bool isGridView;
 	public PopulateGrid PopulateGrid;
+
+	// Text for some useful informations
+	public Text memoryText;
+	public Text numberOfPicturestext;
+
+	private long memoryInBytes;
 	
 	void Start()
 	{
 		files = Directory.GetFiles(Application.persistentDataPath + "/", "*.png");
+
 		isGridView = true;
 
 		if (files.Length <= 0)
 		{
 			gridViewCanvas.GetComponent<Image>().sprite = defaultImage;
 		}
+
+		updateMemoryText();
+		updateNumberOfPictures();
+		
 	}
 
 	// get the path to the picture and show it
@@ -73,11 +83,17 @@ public class UI_Gallery : MonoBehaviour
 	{
 		if (files.Length > 0)
 		{
+			// delete picture
 			string pathToFile = files[whichScreenShotIsShown];
 			if (File.Exists(pathToFile))
 			{
 				File.Delete(pathToFile);
 			}
+
+			// delete button in GridView
+			GameObject pictureButton = (GameObject) PopulateGrid.getButtons()[whichScreenShotIsShown];
+			PopulateGrid.getButtons().RemoveAt(whichScreenShotIsShown);
+			Destroy(pictureButton);
 
 			files = Directory.GetFiles(Application.persistentDataPath + "/", "*.png");
 			if (files.Length > 0)
@@ -90,6 +106,9 @@ public class UI_Gallery : MonoBehaviour
 				// show the default image
 				canvas.GetComponent<Image>().sprite = defaultImage;
 			}
+
+			updateMemoryText();
+			updateNumberOfPictures();
 		}
 	}
 
@@ -157,6 +176,22 @@ public class UI_Gallery : MonoBehaviour
 		isGridView = !isGridView;
 		uiGridView.SetActive(isGridView);
 		uiImageView.SetActive(!isGridView);
+	}
+
+	private void updateMemoryText()
+    {
+		memoryInBytes = 0;
+		foreach (string file in files)
+		{
+			memoryInBytes += new FileInfo(file).Length;
+
+		}
+		memoryText.text = "Memory: \n" + memoryInBytes / 1000000 + " MB";
+	}
+
+	private void updateNumberOfPictures()
+    {
+		numberOfPicturestext.text = "Total: \n" + files.Length;
 	}
 	
 	// Getter

@@ -1,14 +1,15 @@
-﻿using System.Collections;
+﻿using System.IO;
+using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class PopulateGrid : MonoBehaviour
 {
     public UI_Gallery UIGallery;
     public GameObject prefab;
+
+    private ArrayList buttons = new ArrayList();
 
     void Start()
     {
@@ -33,6 +34,9 @@ public class PopulateGrid : MonoBehaviour
                 new Vector2(0.5f, 0.5f));
             newObj.GetComponent<Image>().sprite = sp;
             newObj.GetComponent<Button>().onClick.AddListener(() => UIGallery.ClickImage(icopy));
+
+            // add every button in an ArrayList
+            buttons.Add(newObj);
         }
     }
     
@@ -48,5 +52,10 @@ public class PopulateGrid : MonoBehaviour
             texture.LoadImage(fileBytes);
         }
         return texture;
+    }
+
+    public ArrayList getButtons()
+    {
+        return buttons;
     }
 }
