@@ -41,6 +41,7 @@ public class UI_Manipulation_Script : MonoBehaviour
     
     //Color-UI
     public GameObject uiColor;
+    public FlexibleColorPicker colorPicker;
 
     // childs of Rotation UI
     public CircularRangeControlX circularX;
@@ -243,7 +244,7 @@ public class UI_Manipulation_Script : MonoBehaviour
     // this method activates certain UI elements
     private void activateGameObjects(GameObject[] array)
     {
-        bool skip = false;
+        bool skip = false;   
         foreach(GameObject ui in listUI)
         {
             for(int i = 0; i < array.Length; i++)
@@ -622,6 +623,7 @@ public class UI_Manipulation_Script : MonoBehaviour
         highlightIcon();
 
         activateGameObjects(new GameObject[] {uiColor});
+
     }
 
     

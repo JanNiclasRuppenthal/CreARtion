@@ -16,7 +16,7 @@ using Vuforia;
  *      - take screenshots
  *      - methods for the buttons to change the stages
  */
-public class UI_Selection_Script : MonoBehaviour, IPointerDownHandler
+public class UI_Selection_Script : MonoBehaviour
 { 
 
     // two different uis
@@ -370,10 +370,5 @@ public class UI_Selection_Script : MonoBehaviour, IPointerDownHandler
 
         TextContainer.SetActive(helpIsActivated);
         TapToPlace.SetActive(helpIsActivated);
-    }
-
-    public void OnPointerDown(PointerEventData eventData)
-    {
-        Debug.Log("Something was clicked!!");
     }
 }
